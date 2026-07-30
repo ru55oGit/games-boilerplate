@@ -1,15 +1,11 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import WelcomeScreen from "./pages/Home";
-import Levels from "./pages/levels";
-import Game from "./pages/game";
+import Home from "./pages/Home";
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<WelcomeScreen />} />
-        <Route path="/levels" element={<Levels />} />
-        <Route path="/game" element={<Game />} />
+        <Route path="/" element={<Home />} />
       </Routes>
     </Router>
   );

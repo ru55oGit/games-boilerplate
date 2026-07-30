@@ -5,12 +5,7 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import {
-  Translation,
-  translations,
-  SupportedLanguage,
-  getLanguageByCountry,
-} from "./translations";
+import { Translation, translations, SupportedLanguage } from "./translations";
 
 interface LanguageContextType {
   currentLanguage: SupportedLanguage;

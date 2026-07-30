@@ -1,98 +1,34 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Layout from "../components/Layout";
-import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import LanguageSelector from "../components/LanguageSelector";
 import { useLanguage } from "../i18n/LanguageContext";
-import EmojiCarousel from "../components/EmojiCarousel";
-import { TOTAL_LEVELS, PROGRESS_KEY } from "../levels/levelsData";
 
-const BY_LANGUAGE = {
-  es: {
-    tagline: "observa · piensa · gana",
-    greetingMorning: "Buenos días ☀️",
-    greetingAfternoon: "Buenas tardes 🌤️",
-    greetingEvening: "Buenas noches 🌙",
-    question: "¿Jugamos?",
-    levelLabel: "Nivel",
-    of: "de",
-  },
-  en: {
-    tagline: "observe · think · win",
-    greetingMorning: "Good morning ☀️",
-    greetingAfternoon: "Good afternoon 🌤️",
-    greetingEvening: "Good evening 🌙",
-    question: "Ready to play?",
-    levelLabel: "Level",
-    of: "of",
-  },
-  pt: {
-    tagline: "observe · pense · ganhe",
-    greetingMorning: "Bom dia ☀️",
-    greetingAfternoon: "Boa tarde 🌤️",
-    greetingEvening: "Boa noite 🌙",
-    question: "Vamos jogar?",
-    levelLabel: "Nível",
-    of: "de",
-  },
-  fr: {
-    tagline: "observe · réfléchis · gagne",
-    greetingMorning: "Bonjour ☀️",
-    greetingAfternoon: "Bon après-midi 🌤️",
-    greetingEvening: "Bonsoir 🌙",
-    question: "On joue?",
-    levelLabel: "Niveau",
-    of: "sur",
-  },
-} as const;
+interface GameEntry {
+  name: string;
+  tagline: string;
+  emoji: string;
+  url: string;
+}
 
-export default function WelcomeScreen() {
-  const navigate = useNavigate();
-  const { t, currentLanguage } = useLanguage();
-  const [currentLevel, setCurrentLevel] = useState(1);
+// Tagline en español tal cual la usa cada juego (son nombres propios y
+// frases de marca, no hace falta traducirlas por idioma).
+const GAMES: GameEntry[] = [
+  { name: "Ensopalo", tagline: "buscá · encontrá · ganá", emoji: "🍲", url: "https://ensopalo.com" },
+  { name: "Tuttifrutalo", tagline: "una letra · siete categorías · contrarreloj", emoji: "🍓", url: "https://tuttifrutalo.com" },
+  { name: "Imaginalo", tagline: "pensá · adiviná · ganá", emoji: "🖼️", url: "https://imaginaloapp.com" },
+  { name: "Emojionado", tagline: "observa · clickea · gana", emoji: "😀", url: "https://emojionado.com" },
+  { name: "Enganchalo", tagline: "pensá · enganchá · ganás", emoji: "🔗", url: "https://enganchalo.com" },
+  { name: "Enroscado", tagline: "pensá · respondé · ganá", emoji: "🌀", url: "https://enroscado.com" },
+  { name: "Letris", tagline: "encastrá · formá · sumá", emoji: "🔤", url: "https://letris.net" },
+];
 
-  const lang = (currentLanguage in BY_LANGUAGE ? currentLanguage : "en") as keyof typeof BY_LANGUAGE;
-  const copy = BY_LANGUAGE[lang];
-
-  useEffect(() => {
-    const readProgress = () => {
-      const stored = parseInt(localStorage.getItem(PROGRESS_KEY) || "1", 10);
-      const safe = Number.isFinite(stored) ? Math.min(Math.max(stored, 1), TOTAL_LEVELS) : 1;
-      setCurrentLevel(safe);
-    };
-    readProgress();
-    window.addEventListener("focus", readProgress);
-    document.addEventListener("visibilitychange", readProgress);
-    return () => {
-      window.removeEventListener("focus", readProgress);
-      document.removeEventListener("visibilitychange", readProgress);
-    };
-  }, []);
-
-  const nowHour = new Date().getHours();
-  const greeting =
-    nowHour < 12 ? copy.greetingMorning : nowHour < 20 ? copy.greetingAfternoon : copy.greetingEvening;
-
-  const STEPS = [
-    { icon: "👀", text: t.lookAtGrid },
-    { icon: "🤔", text: t.findDifferent },
-    { icon: "👆", text: t.clickQuickly },
-  ];
+export default function Home() {
+  const { t } = useLanguage();
 
   return (
-    <Layout showFooter={false}>
-      <Box
-        sx={{
-          width: "100%",
-          px: { xs: 1.5, md: 2 },
-          pb: 2,
-          display: "flex",
-          flexDirection: "column",
-          gap: 2,
-        }}
-      >
+    <Layout showFooter>
+      <Box sx={{ width: "100%", px: { xs: 1.5, md: 2 }, pb: 2, display: "flex", flexDirection: "column", gap: 2 }}>
         <LanguageSelector />
 
         <Typography
@@ -104,8 +40,8 @@ export default function WelcomeScreen() {
             fontFamily: "Lobster, cursive",
             width: "100%",
             textAlign: "center",
-            fontSize: { xs: "4.1rem", sm: "5rem", md: "6rem" },
-            lineHeight: 0.95,
+            fontSize: { xs: "3.4rem", sm: "4rem", md: "4.6rem" },
+            lineHeight: 1,
           }}
         >
           {t.appTitle}
@@ -119,121 +55,85 @@ export default function WelcomeScreen() {
             letterSpacing: "2px",
             width: "100%",
             textAlign: "center",
-            fontSize: { xs: 18, md: 22 },
+            fontSize: { xs: 16, md: 20 },
           }}
         >
-          {copy.tagline}
+          {t.tagline}
         </Typography>
 
-        <Typography sx={{ color: "rgba(255, 255, 255, 0.72)", fontWeight: 700, fontSize: { xs: 18, md: 24 } }}>
-          {greeting}
+        <Typography sx={{ color: "#fff", fontWeight: 700, fontSize: { xs: 20, sm: 24 }, textAlign: "center" }}>
+          {t.subtitle}
         </Typography>
 
-        <Typography sx={{ color: "#fff", fontWeight: 700, fontSize: { xs: 24, sm: 32, md: 32 }, lineHeight: 1.05 }}>
-          {copy.question}
-        </Typography>
-
-        {/* Hero card */}
-        <Box
-          sx={{
-            borderRadius: 6,
-            backgroundColor: "#ef7063",
-            display: "flex",
-            flexDirection: "column",
-            p: { xs: 1.75, md: 2.5 },
-            boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
-          }}
-        >
-          <Box
-            sx={{
-              borderRadius: 4,
-              overflow: "hidden",
-              backgroundColor: "#ffffff",
-              width: "100%",
-              height: { xs: 260, md: 300 },
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <EmojiCarousel />
-          </Box>
-
-          <Box
-            sx={{
-              mt: { xs: 1, md: 1.5 },
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: 1.5,
-            }}
-          >
-            <Button
-              variant="contained"
-              onClick={() => navigate("/levels")}
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+          {GAMES.map((game) => (
+            <Box
+              key={game.name}
+              component="a"
+              href={game.url}
+              target="_blank"
+              rel="noopener noreferrer"
               sx={{
-                borderRadius: 999,
+                textDecoration: "none",
+                borderRadius: 4,
                 backgroundColor: "#fff",
-                color: "#c93d2f",
-                px: { xs: 2.5, md: 4 },
-                py: { xs: 0.9, md: 1.2 },
-                fontWeight: 700,
-                fontSize: { xs: 20, md: 30 },
-                textTransform: "none",
-                boxShadow: "none",
-                "&:hover": { backgroundColor: "#fff5f3", boxShadow: "none" },
+                display: "flex",
+                alignItems: "center",
+                gap: 1.5,
+                p: 1.75,
+                boxShadow: "0 6px 16px rgba(0,0,0,0.14)",
+                transition: "transform 0.15s ease",
+                "&:active": { transform: "scale(0.98)" },
               }}
             >
-              {t.playButton}
-            </Button>
-
-            <Box sx={{ flex: 1, minWidth: 0, textAlign: "right", color: "#fff" }}>
-              <Typography sx={{ fontWeight: 700, fontSize: { xs: 14, md: 18 }, lineHeight: 1.1 }}>
-                {t.appTitle}
-              </Typography>
-              <Typography sx={{ opacity: 0.9, fontWeight: 600, fontSize: { xs: 13, md: 16 }, lineHeight: 1.2 }}>
-                {copy.levelLabel} {currentLevel} {copy.of} {TOTAL_LEVELS}
-              </Typography>
-            </Box>
-          </Box>
-        </Box>
-
-        {/* How to play */}
-        <Box sx={{ borderRadius: 4, backgroundColor: "#f2f1f1", px: 2, pt: 2, pb: 3 }}>
-          <Typography
-            sx={{
-              color: "#1f2025",
-              fontWeight: 700,
-              fontSize: { xs: 18, md: 28 },
-              letterSpacing: "1px",
-              mb: 1.75,
-            }}
-          >
-            {t.howToPlay}
-          </Typography>
-
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-            {STEPS.map((step) => (
               <Box
-                key={step.icon}
                 sx={{
+                  width: 56,
+                  height: 56,
+                  flexShrink: 0,
+                  borderRadius: "50%",
+                  backgroundColor: "#fdecea",
                   display: "flex",
                   alignItems: "center",
-                  gap: 1.5,
-                  backgroundColor: "#fff",
-                  border: "1px solid #e3e3e3",
-                  borderRadius: 3,
-                  px: 2,
-                  py: 1.25,
+                  justifyContent: "center",
+                  fontSize: 28,
                 }}
               >
-                <Typography sx={{ fontSize: "28px" }}>{step.icon}</Typography>
-                <Typography sx={{ color: "#222", fontSize: 15, fontWeight: 600 }}>
-                  {step.text}
+                {game.emoji}
+              </Box>
+
+              <Box sx={{ flex: 1, minWidth: 0 }}>
+                <Typography
+                  sx={{
+                    fontFamily: "Lobster, cursive",
+                    color: "#e74c3c",
+                    fontSize: 22,
+                    lineHeight: 1.15,
+                  }}
+                >
+                  {game.name}
+                </Typography>
+                <Typography sx={{ color: "#888", fontSize: 13, fontWeight: 600 }}>
+                  {game.tagline}
                 </Typography>
               </Box>
-            ))}
-          </Box>
+
+              <Box
+                sx={{
+                  flexShrink: 0,
+                  borderRadius: 999,
+                  backgroundColor: "#e74c3c",
+                  color: "#fff",
+                  fontWeight: 700,
+                  fontSize: 13,
+                  px: 2,
+                  py: 0.9,
+                }}
+              >
+                {t.playButton}
+              </Box>
+            </Box>
+          ))}
         </Box>
       </Box>
     </Layout>
