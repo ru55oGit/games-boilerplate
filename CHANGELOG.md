@@ -10,6 +10,11 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
   - Esto reemplaza el cambio anterior de emoji de saludo (☀️/🌤️/🌙): esa pantalla de un solo juego ya no existe
 ### Removed
 - Placeholder del juego "encontrá el emoji diferente" (game.tsx, levels.tsx, EmojiCarousel, VirtualKeyboard, usePhysicalKeyboard, levelsData, textNormalization) y las traducciones que le correspondían, todo sin uso tras el repropósito
+### Added
+- Cada tarjeta de juego pasa a ser una grilla de 2 columnas con: nombre, preview real del juego (versión chica y estática del bloque que ese juego muestra arriba de su propio botón JUGAR) y una descripción corta de la mecánica
+  - Imaginalo (que tiene muchas categorías) usa un carrousel automático que rota cada 2.2s entre la primera imagen de cada categoría (banderas, funkos, escudos, sombras, logos, películas, emojis, jugadores, adivinanzas, wuzzles), copiadas de imaginaloReact
+  - El resto de los juegos usan un preview estático hardcodeado (sin importar datos en vivo de otros repos): grilla de sopa de letras, cadena de palabras, rosco circular, grilla de Letris, grilla de emojis, chip de letra de Tuttifrutalo
+  - Agregado un plugin de Vite (+ esbuild plugin para el scan de dependencias) para poder compilar los .js con JSX copiados de Imaginalo, igual que hace ese proyecto
 
 ## [2026-06-23]
 ### Changed

@@ -1,26 +1,71 @@
+import { ReactNode } from "react";
 import Layout from "../components/Layout";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import LanguageSelector from "../components/LanguageSelector";
 import { useLanguage } from "../i18n/LanguageContext";
+import ImaginaloCarousel from "../components/ImaginaloCarousel";
+import {
+  TuttifrutaloPreview,
+  EnsopaloPreview,
+  EnganchaloPreview,
+  EnroscadoPreview,
+  LetrisPreview,
+  EmojionadoPreview,
+} from "../components/GamePreviews";
 
 interface GameEntry {
   name: string;
-  tagline: string;
-  emoji: string;
+  description: string;
   url: string;
+  preview: ReactNode;
 }
 
-// Tagline en español tal cual la usa cada juego (son nombres propios y
-// frases de marca, no hace falta traducirlas por idioma).
+// Descripciones y preview en español tal cual (son nombres propios y
+// mecánicas de juego, no hace falta traducirlas por idioma).
 const GAMES: GameEntry[] = [
-  { name: "Ensopalo", tagline: "buscá · encontrá · ganá", emoji: "🍲", url: "https://ensopalo.com" },
-  { name: "Tuttifrutalo", tagline: "una letra · siete categorías · contrarreloj", emoji: "🍓", url: "https://tuttifrutalo.com" },
-  { name: "Imaginalo", tagline: "pensá · adiviná · ganá", emoji: "🖼️", url: "https://imaginaloapp.com" },
-  { name: "Emojionado", tagline: "observa · clickea · gana", emoji: "😀", url: "https://emojionado.com" },
-  { name: "Enganchalo", tagline: "pensá · enganchá · ganás", emoji: "🔗", url: "https://enganchalo.com" },
-  { name: "Enroscado", tagline: "pensá · respondé · ganá", emoji: "🌀", url: "https://enroscado.com" },
-  { name: "Letris", tagline: "encastrá · formá · sumá", emoji: "🔤", url: "https://letris.net" },
+  {
+    name: "Ensopalo",
+    description: "Buscá palabras ocultas —horizontal, vertical o en diagonal— en una sopa de letras nueva cada día.",
+    url: "https://ensopalo.com",
+    preview: <EnsopaloPreview />,
+  },
+  {
+    name: "Tuttifrutalo",
+    description: "Elegís una letra y, contrarreloj, completás una palabra por cada categoría que empiece con esa letra.",
+    url: "https://tuttifrutalo.com",
+    preview: <TuttifrutaloPreview />,
+  },
+  {
+    name: "Imaginalo",
+    description: "Adiviná qué representa una imagen entre banderas, funkos, escudos, sombras, logos y muchas categorías más.",
+    url: "https://imaginaloapp.com",
+    preview: <ImaginaloCarousel />,
+  },
+  {
+    name: "Emojionado",
+    description: "Elegí una categoría de acertijos con emojis: encontrar el diferente, adivinar películas, banderas o qué representa cada uno.",
+    url: "https://emojionado.com",
+    preview: <EmojionadoPreview />,
+  },
+  {
+    name: "Enganchalo",
+    description: "Encadená palabras: cada una empieza con la última sílaba de la anterior.",
+    url: "https://enganchalo.com",
+    preview: <EnganchaloPreview />,
+  },
+  {
+    name: "Enroscado",
+    description: "Es un rosco tipo Pasapalabra: respondé una definición por cada letra del abecedario, contrarreloj.",
+    url: "https://enroscado.com",
+    preview: <EnroscadoPreview />,
+  },
+  {
+    name: "Letris",
+    description: "Caen fichas de letras tipo Tetris y armás palabras conectando letras adyacentes.",
+    url: "https://letris.net",
+    preview: <LetrisPreview />,
+  },
 ];
 
 export default function Home() {
@@ -65,7 +110,7 @@ export default function Home() {
           {t.subtitle}
         </Typography>
 
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+        <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1.25 }}>
           {GAMES.map((game) => (
             <Box
               key={game.name}
@@ -78,56 +123,57 @@ export default function Home() {
                 borderRadius: 4,
                 backgroundColor: "#fff",
                 display: "flex",
-                alignItems: "center",
-                gap: 1.5,
-                p: 1.75,
+                flexDirection: "column",
+                gap: 0.75,
+                p: 1.25,
                 boxShadow: "0 6px 16px rgba(0,0,0,0.14)",
                 transition: "transform 0.15s ease",
                 "&:active": { transform: "scale(0.98)" },
               }}
             >
+              <Typography
+                sx={{
+                  fontFamily: "Lobster, cursive",
+                  color: "#e74c3c",
+                  fontSize: 19,
+                  lineHeight: 1.15,
+                  textAlign: "center",
+                }}
+              >
+                {game.name}
+              </Typography>
+
               <Box
                 sx={{
-                  width: 56,
-                  height: 56,
-                  flexShrink: 0,
-                  borderRadius: "50%",
-                  backgroundColor: "#fdecea",
+                  borderRadius: 3,
+                  backgroundColor: "#f7f7f7",
+                  border: "1px solid #eee",
+                  aspectRatio: "1",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  fontSize: 28,
+                  p: 1,
+                  overflow: "hidden",
                 }}
               >
-                {game.emoji}
+                {game.preview}
               </Box>
 
-              <Box sx={{ flex: 1, minWidth: 0 }}>
-                <Typography
-                  sx={{
-                    fontFamily: "Lobster, cursive",
-                    color: "#e74c3c",
-                    fontSize: 22,
-                    lineHeight: 1.15,
-                  }}
-                >
-                  {game.name}
-                </Typography>
-                <Typography sx={{ color: "#888", fontSize: 13, fontWeight: 600 }}>
-                  {game.tagline}
-                </Typography>
-              </Box>
+              <Typography sx={{ color: "#777", fontSize: 11, lineHeight: 1.35, flex: 1 }}>
+                {game.description}
+              </Typography>
 
               <Box
                 sx={{
-                  flexShrink: 0,
+                  alignSelf: "center",
                   borderRadius: 999,
                   backgroundColor: "#e74c3c",
                   color: "#fff",
                   fontWeight: 700,
-                  fontSize: 13,
+                  fontSize: 12,
                   px: 2,
-                  py: 0.9,
+                  py: 0.7,
+                  mt: 0.25,
                 }}
               >
                 {t.playButton}
