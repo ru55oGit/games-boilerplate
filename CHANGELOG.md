@@ -15,6 +15,11 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
   - Imaginalo (que tiene muchas categorías) usa un carrousel automático que rota cada 2.2s entre la primera imagen de cada categoría (banderas, funkos, escudos, sombras, logos, películas, emojis, jugadores, adivinanzas, wuzzles), copiadas de imaginaloReact
   - El resto de los juegos usan un preview estático hardcodeado (sin importar datos en vivo de otros repos): grilla de sopa de letras, cadena de palabras, rosco circular, grilla de Letris, grilla de emojis, chip de letra de Tuttifrutalo
   - Agregado un plugin de Vite (+ esbuild plugin para el scan de dependencias) para poder compilar los .js con JSX copiados de Imaginalo, igual que hace ese proyecto
+### Fixed
+- Preview de Enroscado: círculo agrandado de 84px a 125px, con los puntitos reacomodados (radio y tamaño) para que se vean bien a ese tamaño
+- Preview de Enroscado: 16 puntos en vez de 26, para que se note el espacio entre cada uno y se distinga que es un rosco (antes se pegaban entre sí y parecía una mancha)
+- Preview de Enroscado: agregar la letra (A a P) dentro de cada punto
+- Preview de Enroscado: centrar la letra dentro de cada punto (el `<Typography>` anidado quedaba corrido; ahora el texto va directo en el mismo Box con flex-centering)
 
 ## [2026-06-23]
 ### Changed

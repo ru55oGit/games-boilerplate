@@ -99,12 +99,13 @@ export function EnganchaloPreview() {
 }
 
 export function EnroscadoPreview() {
-  const size = 84;
-  const radius = size / 2 - 10;
-  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+  const size = 125;
+  const dotSize = 18;
+  const radius = size / 2 - dotSize / 2 - 6;
+  const letters = "ABCDEFGHIJKLMNOP".split(""); // 16 en vez de 26, para que se note el espacio entre los puntos
   const statusColor = (i: number) => {
-    if (i < 6) return "#2ecc71"; // correcta
-    if (i === 6) return "#f1c40f"; // activa
+    if (i < 4) return "#2ecc71"; // correcta
+    if (i === 4) return "#f1c40f"; // activa
     return "#1565c0"; // pendiente
   };
   return (
@@ -117,10 +118,14 @@ export function EnroscadoPreview() {
           <Box
             key={letter}
             sx={{
-              position: "absolute", left: x - 6, top: y - 6, width: 12, height: 12, borderRadius: "50%",
+              position: "absolute", left: x - dotSize / 2, top: y - dotSize / 2, width: dotSize, height: dotSize, borderRadius: "50%",
               backgroundColor: statusColor(i),
+              display: "flex", alignItems: "center", justifyContent: "center",
+              color: "#fff", fontSize: 9, fontWeight: 800, lineHeight: 1, fontFamily: "inherit",
             }}
-          />
+          >
+            {letter}
+          </Box>
         );
       })}
     </Box>
