@@ -24,6 +24,9 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
 - Preview de Imaginalo: la imagen del carrousel pasa de 70% a 96% del box, se ve bastante más grande
 ### Changed
 - Título y tagline del hub: "Mis Juegos" → "Dejá de Boludear", "pensá · jugá · repetí" → "cerrá redes · pensá · divertite" (solo en español, es una frase de tono muy argentino; el resto de los idiomas quedan con el título genérico anterior)
+- Previews de Tuttifrutalo, Emojionado, Enganchalo, Enroscado y Letris agrandan su contenido en desktop (scale 1.6x vía prop `scale`, activado con un media query fijo de 900px). Ensopalo e Imaginalo no lo necesitan porque ya escalan solos con el tamaño del box.
+### Fixed
+- Bug al agregar el escalado: `useTheme()` de `@mui/material/styles` rompía toda la página (esta app no tiene `ThemeProvider`, y crear el theme por default chocaba con el bundle de Vite). Se reemplazó por un media query fijo con `useMediaQuery("(min-width:900px)")`, que no depende del theme.
 
 ## [2026-06-23]
 ### Changed

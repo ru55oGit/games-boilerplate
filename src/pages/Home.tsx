@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import Layout from "../components/Layout";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import LanguageSelector from "../components/LanguageSelector";
 import { useLanguage } from "../i18n/LanguageContext";
 import ImaginaloCarousel from "../components/ImaginaloCarousel";
@@ -23,53 +24,62 @@ interface GameEntry {
 
 // Descripciones y preview en español tal cual (son nombres propios y
 // mecánicas de juego, no hace falta traducirlas por idioma).
-const GAMES: GameEntry[] = [
-  {
-    name: "Ensopalo",
-    description: "Buscá palabras ocultas —horizontal, vertical o en diagonal— en una sopa de letras nueva cada día.",
-    url: "https://ensopalo.com",
-    preview: <EnsopaloPreview />,
-  },
-  {
-    name: "Tuttifrutalo",
-    description: "Elegís una letra y, contrarreloj, completás una palabra por cada categoría que empiece con esa letra.",
-    url: "https://tuttifrutalo.com",
-    preview: <TuttifrutaloPreview />,
-  },
-  {
-    name: "Imaginalo",
-    description: "Adiviná qué representa una imagen entre banderas, funkos, escudos, sombras, logos y muchas categorías más.",
-    url: "https://imaginaloapp.com",
-    preview: <ImaginaloCarousel />,
-  },
-  {
-    name: "Emojionado",
-    description: "Elegí una categoría de acertijos con emojis: encontrar el diferente, adivinar películas, banderas o qué representa cada uno.",
-    url: "https://emojionado.com",
-    preview: <EmojionadoPreview />,
-  },
-  {
-    name: "Enganchalo",
-    description: "Encadená palabras: cada una empieza con la última sílaba de la anterior.",
-    url: "https://enganchalo.com",
-    preview: <EnganchaloPreview />,
-  },
-  {
-    name: "Enroscado",
-    description: "Es un rosco tipo Pasapalabra: respondé una definición por cada letra del abecedario, contrarreloj.",
-    url: "https://enroscado.com",
-    preview: <EnroscadoPreview />,
-  },
-  {
-    name: "Letris",
-    description: "Caen fichas de letras tipo Tetris y armás palabras conectando letras adyacentes.",
-    url: "https://letris.net",
-    preview: <LetrisPreview />,
-  },
-];
+// `scale` agranda el contenido interno de los previews con tamaño fijo en
+// desktop (Ensopalo e Imaginalo ya escalan solos, por eso no lo reciben).
+function buildGames(scale: number): GameEntry[] {
+  return [
+    {
+      name: "Ensopalo",
+      description: "Buscá palabras ocultas —horizontal, vertical o en diagonal— en una sopa de letras nueva cada día.",
+      url: "https://ensopalo.com",
+      preview: <EnsopaloPreview />,
+    },
+    {
+      name: "Tuttifrutalo",
+      description: "Elegís una letra y, contrarreloj, completás una palabra por cada categoría que empiece con esa letra.",
+      url: "https://tuttifrutalo.com",
+      preview: <TuttifrutaloPreview scale={scale} />,
+    },
+    {
+      name: "Imaginalo",
+      description: "Adiviná qué representa una imagen entre banderas, funkos, escudos, sombras, logos y muchas categorías más.",
+      url: "https://imaginaloapp.com",
+      preview: <ImaginaloCarousel />,
+    },
+    {
+      name: "Emojionado",
+      description: "Elegí una categoría de acertijos con emojis: encontrar el diferente, adivinar películas, banderas o qué representa cada uno.",
+      url: "https://emojionado.com",
+      preview: <EmojionadoPreview scale={scale} />,
+    },
+    {
+      name: "Enganchalo",
+      description: "Encadená palabras: cada una empieza con la última sílaba de la anterior.",
+      url: "https://enganchalo.com",
+      preview: <EnganchaloPreview scale={scale} />,
+    },
+    {
+      name: "Enroscado",
+      description: "Es un rosco tipo Pasapalabra: respondé una definición por cada letra del abecedario, contrarreloj.",
+      url: "https://enroscado.com",
+      preview: <EnroscadoPreview scale={scale} />,
+    },
+    {
+      name: "Letris",
+      description: "Caen fichas de letras tipo Tetris y armás palabras conectando letras adyacentes.",
+      url: "https://letris.net",
+      preview: <LetrisPreview scale={scale} />,
+    },
+  ];
+}
 
 export default function Home() {
   const { t } = useLanguage();
+  // Media query fija (mismo corte que el breakpoint "md" de MUI) en vez de
+  // theme.breakpoints.up("md"): esta app no tiene ThemeProvider, y useTheme()
+  // creando el theme por default rompía el bundle de Vite.
+  const isDesktop = useMediaQuery("(min-width:900px)");
+  const games = buildGames(isDesktop ? 1.6 : 1);
 
   return (
     <Layout showFooter>
@@ -111,7 +121,7 @@ export default function Home() {
         </Typography>
 
         <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1.25 }}>
-          {GAMES.map((game) => (
+          {games.map((game) => (
             <Box
               key={game.name}
               component="a"
