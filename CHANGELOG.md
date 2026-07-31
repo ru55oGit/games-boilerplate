@@ -20,6 +20,10 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
 - Preview de Enroscado: 16 puntos en vez de 26, para que se note el espacio entre cada uno y se distinga que es un rosco (antes se pegaban entre sí y parecía una mancha)
 - Preview de Enroscado: agregar la letra (A a P) dentro de cada punto
 - Preview de Enroscado: centrar la letra dentro de cada punto (el `<Typography>` anidado quedaba corrido; ahora el texto va directo en el mismo Box con flex-centering)
+- Preview de Enroscado: círculo de 125px a 120px (queda centrado automáticamente, el cálculo de radio ya dependía de `size`)
+- Preview de Imaginalo: la imagen del carrousel pasa de 70% a 96% del box, se ve bastante más grande
+### Changed
+- Título y tagline del hub: "Mis Juegos" → "Dejá de Boludear", "pensá · jugá · repetí" → "cerrá redes · pensá · divertite" (solo en español, es una frase de tono muy argentino; el resto de los idiomas quedan con el título genérico anterior)
 
 ## [2026-06-23]
 ### Changed

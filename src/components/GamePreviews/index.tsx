@@ -99,7 +99,7 @@ export function EnganchaloPreview() {
 }
 
 export function EnroscadoPreview() {
-  const size = 125;
+  const size = 120;
   const dotSize = 18;
   const radius = size / 2 - dotSize / 2 - 6;
   const letters = "ABCDEFGHIJKLMNOP".split(""); // 16 en vez de 26, para que se note el espacio entre los puntos

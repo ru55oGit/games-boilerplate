@@ -39,7 +39,7 @@ export default function ImaginaloCarousel() {
         },
       }}
     >
-      <Box key={key} className="fade-in" sx={{ width: "70%", height: "70%" }}>
+      <Box key={key} className="fade-in" sx={{ width: "96%", height: "96%" }}>
         <Suspense fallback={null}>
           <Comp />
         </Suspense>

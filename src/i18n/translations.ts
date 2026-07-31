@@ -7,8 +7,8 @@ export interface Translation {
 
 export const translations: Record<string, Translation> = {
   es: {
-    appTitle: "Mis Juegos",
-    tagline: "pensá · jugá · repetí",
+    appTitle: "Dejá de Boludear",
+    tagline: "cerrá redes · pensá · divertite",
     subtitle: "Elegí un juego para jugar",
     playButton: "JUGAR",
   },
