@@ -139,8 +139,6 @@ export default function Home() {
               key={game.name}
               component="a"
               href={game.url}
-              target="_blank"
-              rel="noopener noreferrer"
               sx={{
                 textDecoration: "none",
                 borderRadius: 4,

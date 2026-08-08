@@ -10,6 +10,7 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
 - Texto manifiesto entre el tagline y "Elegí un juego para jugar": explica por qué jugar en vez de hacer scroll infinito
 ### Changed
 - Cada juego del hub linkea con `?from=boludeando` en la URL, para que la home de cada juego pueda mostrar un botón de volver al hub
+- Los cards de juego ya no abren en pestaña nueva (se sacó `target="_blank"`), para que el botón de volver al hub tenga sentido
 ### Changed
 - Repropósito completo del proyecto: de boilerplate de un juego ("encontrá el emoji diferente") a página contenedora ("Mis Juegos") que linkea a los 7 juegos ya publicados (Ensopalo, Tuttifrutalo, Imaginalo, Emojionado, Enganchalo, Enroscado, Letris), reutilizando el mismo look and feel (gradiente rojo, fuente Lobster, lluvia de emojis de fondo)
   - Esto reemplaza el cambio anterior de emoji de saludo (☀️/🌤️/🌙): esa pantalla de un solo juego ya no existe
