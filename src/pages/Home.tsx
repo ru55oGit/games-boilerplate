@@ -116,6 +116,19 @@ export default function Home() {
           {t.tagline}
         </Typography>
 
+        <Typography
+          sx={{
+            color: "rgba(255, 255, 255, 0.85)",
+            fontSize: { xs: 13, sm: 14 },
+            lineHeight: 1.6,
+            textAlign: "center",
+            maxWidth: 640,
+            mx: "auto",
+          }}
+        >
+          {t.manifesto}
+        </Typography>
+
         <Typography sx={{ color: "#fff", fontWeight: 700, fontSize: { xs: 20, sm: 24 }, textAlign: "center" }}>
           {t.subtitle}
         </Typography>

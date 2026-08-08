@@ -7,6 +7,7 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
 ## [Unreleased]
 ### Added
 - favicon.svg (faltaba, el link en index.html apuntaba a un archivo inexistente)
+- Texto manifiesto entre el tagline y "Elegí un juego para jugar": explica por qué jugar en vez de hacer scroll infinito
 ### Changed
 - Cada juego del hub linkea con `?from=boludeando` en la URL, para que la home de cada juego pueda mostrar un botón de volver al hub
 ### Changed
