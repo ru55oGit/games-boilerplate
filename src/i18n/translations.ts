@@ -11,7 +11,7 @@ export const translations: Record<string, Translation> = {
     appTitle: "Boludeando",
     tagline: "cerrá redes · pensá · divertite",
     manifesto:
-      "El scroll infinito no ejercita nada. Pasar horas deslizando redes sociales apaga la atención, fragmenta la memoria y le da al cerebro dopamina fácil sin esfuerzo real, como comer solo golosinas. Con el tiempo, esto reduce la capacidad de concentrarte, de pensar en profundidad y hasta de aburrirte (que es donde nace la creatividad). Los juegos mentales —sopas de letras, acertijos, categorías contrarreloj— hacen lo contrario: obligan a tu cabeza a buscar, asociar y resolver, fortaleciendo memoria y agilidad mental real. Es la diferencia entre consumir contenido y ejercitar la mente. Elegí un juego, no un scroll más.",
+      "Pasar horas deslizando redes sociales apaga la atención, fragmenta la memoria y le da al cerebro dopamina fácil sin esfuerzo real, como comer solo golosinas. Con el tiempo, esto reduce la capacidad de concentrarte, de pensar en profundidad y hasta de aburrirte (que es donde nace la creatividad). Los juegos mentales —sopas de letras, acertijos, categorías contrarreloj— hacen lo contrario: obligan a tu cabeza a buscar, asociar y resolver, fortaleciendo memoria y agilidad mental real. Es la diferencia entre consumir contenido y ejercitar la mente.",
     subtitle: "Elegí un juego para jugar",
     playButton: "JUGAR",
   },
