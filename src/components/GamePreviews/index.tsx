@@ -166,6 +166,35 @@ export function LetrisPreview({ scale = 1 }: ScaleProps) {
   );
 }
 
+export function ViborealoPreview({ scale = 1 }: ScaleProps) {
+  const cellSize = 22 * scale;
+  const cells: { letter: string; kind: "body" | "head" | "tile" }[] = [
+    { letter: "S", kind: "body" },
+    { letter: "O", kind: "body" },
+    { letter: "L", kind: "body" },
+    { letter: "", kind: "head" },
+    { letter: "A", kind: "tile" },
+  ];
+  return (
+    <Box sx={{ display: "flex", gap: `${3 * scale}px` }}>
+      {cells.map((cell, i) => (
+        <Box
+          key={i}
+          sx={{
+            width: cellSize, height: cellSize, display: "flex", alignItems: "center", justifyContent: "center",
+            fontFamily: "monospace", fontSize: 12 * scale, fontWeight: 800,
+            borderRadius: cell.kind === "head" ? "30% 70% 70% 30%" : "4px",
+            backgroundColor: cell.kind === "body" ? "#22c55e" : cell.kind === "head" ? "#c0392b" : "#fce4e1",
+            color: cell.kind === "tile" ? ACCENT : "#fff",
+          }}
+        >
+          {cell.letter}
+        </Box>
+      ))}
+    </Box>
+  );
+}
+
 export function EmojionadoPreview({ scale = 1 }: ScaleProps) {
   const EMOJI = "😀";
   const DIFFERENT = "😄";

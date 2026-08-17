@@ -13,6 +13,7 @@ import {
   EnroscadoPreview,
   LetrisPreview,
   EmojionadoPreview,
+  ViborealoPreview,
 } from "../components/GamePreviews";
 
 interface GameEntry {
@@ -69,6 +70,12 @@ function buildGames(scale: number): GameEntry[] {
       description: "Caen fichas de letras tipo Tetris y armás palabras conectando letras adyacentes.",
       url: "https://letris.net?from=boludeando",
       preview: <LetrisPreview scale={scale} />,
+    },
+    {
+      name: "Viborealo",
+      description: "La viborita clásica: comé letras para sumarlas al cuerpo y formá palabras para hacerlas desaparecer y sumar puntos.",
+      url: "https://viborealo.com?from=boludeando",
+      preview: <ViborealoPreview scale={scale} />,
     },
   ];
 }
