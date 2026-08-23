@@ -9,6 +9,7 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
 - favicon.svg (faltaba, el link en index.html apuntaba a un archivo inexistente)
 - Texto manifiesto entre el tagline y "Elegí un juego para jugar": explica por qué jugar en vez de hacer scroll infinito
 - Agregar Viborealo al hub (compró el dominio viborealo.com), con su preview (ViborealoPreview: cuerpo S-O-L en verde + cabeza + ficha suelta)
+- SEO: comprado el dominio www.boludeando.com — agregar description, keywords, og:*, canonical (index.html no tenía nada), robots.txt y sitemap.xml (faltaban)
 ### Changed
 - Cada juego del hub linkea con `?from=boludeando` en la URL, para que la home de cada juego pueda mostrar un botón de volver al hub
 - Los cards de juego ya no abren en pestaña nueva (se sacó `target="_blank"`), para que el botón de volver al hub tenga sentido
