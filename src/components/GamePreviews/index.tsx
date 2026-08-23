@@ -106,7 +106,7 @@ export function EnganchaloPreview({ scale = 1 }: ScaleProps) {
 export function EnroscadoPreview({ scale = 1 }: ScaleProps) {
   const size = 120 * scale;
   const dotSize = 18 * scale;
-  const radius = size / 2 - dotSize / 2 - 6;
+  const radius = size / 2 - 3; // -3 (grosor del borde): las letras quedan apoyadas sobre la línea del círculo, como en un rosco real
   const letters = "ABCDEFGHIJKLMNOP".split(""); // 16 en vez de 26, para que se note el espacio entre los puntos
   const statusColor = (i: number) => {
     if (i < 4) return "#2ecc71"; // correcta
