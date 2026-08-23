@@ -30,40 +30,16 @@ interface GameEntry {
 function buildGames(scale: number): GameEntry[] {
   return [
     {
-      name: "Ensopalo",
-      description: "Buscá palabras ocultas —horizontal, vertical o en diagonal— en una sopa de letras nueva cada día.",
-      url: "https://ensopalo.com?from=boludeando",
-      preview: <EnsopaloPreview />,
-    },
-    {
-      name: "Tuttifrutalo",
-      description: "Elegís una letra y, contrarreloj, completás una palabra por cada categoría que empiece con esa letra.",
-      url: "https://tuttifrutalo.com?from=boludeando",
-      preview: <TuttifrutaloPreview scale={scale} />,
-    },
-    {
       name: "Imaginalo",
       description: "Adiviná qué representa una imagen entre banderas, funkos, escudos, sombras, logos y muchas categorías más.",
       url: "https://imaginaloapp.com?from=boludeando",
       preview: <ImaginaloCarousel />,
     },
     {
-      name: "Emojionado",
-      description: "Elegí una categoría de acertijos con emojis: encontrar el diferente, adivinar películas, banderas o qué representa cada uno.",
-      url: "https://emojionado.com?from=boludeando",
-      preview: <EmojionadoPreview scale={scale} />,
-    },
-    {
-      name: "Enganchalo",
-      description: "Encadená palabras: cada una empieza con la última sílaba de la anterior.",
-      url: "https://enganchalo.com?from=boludeando",
-      preview: <EnganchaloPreview scale={scale} />,
-    },
-    {
-      name: "Enroscado",
-      description: "Es un rosco tipo Pasapalabra: respondé una definición por cada letra del abecedario, contrarreloj.",
-      url: "https://enroscado.com?from=boludeando",
-      preview: <EnroscadoPreview scale={scale} />,
+      name: "Ensopalo",
+      description: "Buscá palabras ocultas —horizontal, vertical o en diagonal— en una sopa de letras nueva cada día.",
+      url: "https://ensopalo.com?from=boludeando",
+      preview: <EnsopaloPreview />,
     },
     {
       name: "Letris",
@@ -76,6 +52,30 @@ function buildGames(scale: number): GameEntry[] {
       description: "La viborita clásica: comé letras para sumarlas al cuerpo y formá palabras para hacerlas desaparecer y sumar puntos.",
       url: "https://viborealo.com?from=boludeando",
       preview: <ViborealoPreview scale={scale} />,
+    },
+    {
+      name: "Enroscado",
+      description: "Es un rosco tipo Pasapalabra: respondé una definición por cada letra del abecedario, contrarreloj.",
+      url: "https://enroscado.com?from=boludeando",
+      preview: <EnroscadoPreview scale={scale} />,
+    },
+    {
+      name: "Enganchalo",
+      description: "Encadená palabras: cada una empieza con la última sílaba de la anterior.",
+      url: "https://enganchalo.com?from=boludeando",
+      preview: <EnganchaloPreview scale={scale} />,
+    },
+    {
+      name: "Emojionado",
+      description: "Elegí una categoría de acertijos con emojis: encontrar el diferente, adivinar películas, banderas o qué representa cada uno.",
+      url: "https://emojionado.com?from=boludeando",
+      preview: <EmojionadoPreview scale={scale} />,
+    },
+    {
+      name: "Tuttifrutalo",
+      description: "Elegís una letra y, contrarreloj, completás una palabra por cada categoría que empiece con esa letra.",
+      url: "https://tuttifrutalo.com?from=boludeando",
+      preview: <TuttifrutaloPreview scale={scale} />,
     },
   ];
 }

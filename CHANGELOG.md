@@ -14,6 +14,7 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
 - Cada juego del hub linkea con `?from=boludeando` en la URL, para que la home de cada juego pueda mostrar un botón de volver al hub
 - Los cards de juego ya no abren en pestaña nueva (se sacó `target="_blank"`), para que el botón de volver al hub tenga sentido
 - Preview de Enroscado: las letras del rosco quedaban con un hueco visible respecto a la línea del círculo (el anillo ya estaba centrado, pero con radio chico). Se agranda el radio para que se apoyen sobre el borde, como en un rosco real
+- Reordenar los juegos del hub: Imaginalo, Ensopalo, Letris, Viborealo, Enroscado, Enganchalo, Emojionado, Tuttifrutalo
 ### Changed
 - Repropósito completo del proyecto: de boilerplate de un juego ("encontrá el emoji diferente") a página contenedora ("Mis Juegos") que linkea a los 7 juegos ya publicados (Ensopalo, Tuttifrutalo, Imaginalo, Emojionado, Enganchalo, Enroscado, Letris), reutilizando el mismo look and feel (gradiente rojo, fuente Lobster, lluvia de emojis de fondo)
   - Esto reemplaza el cambio anterior de emoji de saludo (☀️/🌤️/🌙): esa pantalla de un solo juego ya no existe
