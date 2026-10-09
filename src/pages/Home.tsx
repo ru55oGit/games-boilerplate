@@ -4,6 +4,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import LanguageSelector from "../components/LanguageSelector";
+import AdSlotAvailableBanner from "../ads/AdSlotAvailableBanner";
 import { useLanguage } from "../i18n/LanguageContext";
 import ImaginaloCarousel from "../components/ImaginaloCarousel";
 import {
@@ -209,6 +210,13 @@ export default function Home() {
             </Box>
           ))}
         </Box>
+
+        {/* Banner fijo "anunciá acá" — no es un ad_slot real, nunca se
+            reemplaza por una campaña comprada. Siempre hay un lugar visible
+            para que alguien descubra que puede anunciar en la hub, incluso
+            si todos los slots de verdad de los juegos ya están vendidos
+            (2026-10-09). */}
+        <AdSlotAvailableBanner weeklyPrice={1000} />
       </Box>
     </Layout>
   );
