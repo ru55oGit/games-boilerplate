@@ -18,64 +18,108 @@ import {
   ViborealoPreview,
 } from "../components/GamePreviews";
 
+// es/en/pt — mismo alcance que el resto del hub (adFallbackCopy.ts,
+// HubAdPromoBanner, ShareButtons); fr ya no está en el selector pero por
+// las dudas cae a español si queda guardado en localStorage de antes.
+interface LocalizedDescription {
+  es: string;
+  en: string;
+  pt: string;
+}
+
 interface GameEntry {
   name: string;
-  description: string;
+  description: LocalizedDescription;
   url: string;
   preview: ReactNode;
 }
 
-// Descripciones y preview en español tal cual (son nombres propios y
-// mecánicas de juego, no hace falta traducirlas por idioma).
+function d(es: string, en: string, pt: string): LocalizedDescription {
+  return { es, en, pt };
+}
+
+// Los nombres (Imaginalo, Ensopalo, etc.) son marca propia, no se traducen.
 // `scale` agranda el contenido interno de los previews con tamaño fijo en
 // desktop (Ensopalo e Imaginalo ya escalan solos, por eso no lo reciben).
 function buildGames(scale: number): GameEntry[] {
   return [
     {
       name: "Imaginalo",
-      description: "Adiviná qué representa una imagen entre banderas, funkos, escudos, sombras, logos y muchas categorías más.",
+      description: d(
+        "Adiviná qué representa una imagen entre banderas, funkos, escudos, sombras, logos y muchas categorías más.",
+        "Guess what an image represents — flags, funkos, crests, shadows, logos, and many more categories.",
+        "Adivinhe o que uma imagem representa entre bandeiras, funkos, escudos, sombras, logos e muitas outras categorias.",
+      ),
       url: "https://imaginaloapp.com?from=boludeando",
       preview: <ImaginaloCarousel />,
     },
     {
       name: "Ensopalo",
-      description: "Buscá palabras ocultas —horizontal, vertical o en diagonal— en una sopa de letras nueva cada día.",
+      description: d(
+        "Buscá palabras ocultas —horizontal, vertical o en diagonal— en una sopa de letras nueva cada día.",
+        "Find hidden words — horizontal, vertical, or diagonal — in a new word search every day.",
+        "Encontre palavras escondidas — na horizontal, vertical ou diagonal — numa caça-palavras nova todo dia.",
+      ),
       url: "https://ensopalo.com?from=boludeando",
       preview: <EnsopaloPreview />,
     },
     {
       name: "Letris",
-      description: "Caen fichas de letras tipo Tetris y armás palabras conectando letras adyacentes.",
+      description: d(
+        "Caen fichas de letras tipo Tetris y armás palabras conectando letras adyacentes.",
+        "Letter tiles fall Tetris-style and you build words by connecting adjacent letters.",
+        "Caem fichas de letras estilo Tetris e você forma palavras conectando letras vizinhas.",
+      ),
       url: "https://letris.net?from=boludeando",
       preview: <LetrisPreview scale={scale} />,
     },
     {
       name: "Viborealo",
-      description: "La viborita clásica: comé letras para sumarlas al cuerpo y formá palabras para hacerlas desaparecer y sumar puntos.",
+      description: d(
+        "La viborita clásica: comé letras para sumarlas al cuerpo y formá palabras para hacerlas desaparecer y sumar puntos.",
+        "The classic snake game: eat letters to add them to your body and form words to clear them and score points.",
+        "A cobrinha clássica: coma letras para somá-las ao corpo e forme palavras para fazê-las desaparecer e somar pontos.",
+      ),
       url: "https://viborealo.com?from=boludeando",
       preview: <ViborealoPreview scale={scale} />,
     },
     {
       name: "Enroscado",
-      description: "Es un rosco tipo Pasapalabra: respondé una definición por cada letra del abecedario, contrarreloj.",
+      description: d(
+        "Es un rosco tipo Pasapalabra: respondé una definición por cada letra del abecedario, contrarreloj.",
+        "A word-ring challenge: answer one clue per letter of the alphabet, against the clock.",
+        "Um desafio em roda de perguntas: responda uma definição para cada letra do alfabeto, contra o tempo.",
+      ),
       url: "https://enroscado.com?from=boludeando",
       preview: <EnroscadoPreview scale={scale} />,
     },
     {
       name: "Enganchalo",
-      description: "Encadená palabras: cada una empieza con la última sílaba de la anterior.",
+      description: d(
+        "Encadená palabras: cada una empieza con la última sílaba de la anterior.",
+        "Chain words together: each one starts with the last syllable of the previous one.",
+        "Encadeie palavras: cada uma começa com a última sílaba da anterior.",
+      ),
       url: "https://enganchalo.com?from=boludeando",
       preview: <EnganchaloPreview scale={scale} />,
     },
     {
       name: "Emojionado",
-      description: "Elegí una categoría de acertijos con emojis: encontrar el diferente, adivinar películas, banderas o qué representa cada uno.",
+      description: d(
+        "Elegí una categoría de acertijos con emojis: encontrar el diferente, adivinar películas, banderas o qué representa cada uno.",
+        "Pick an emoji-riddle category: spot the odd one out, guess the movie, the flag, or what each emoji represents.",
+        "Escolha uma categoria de charadas com emojis: encontrar o diferente, adivinhar filmes, bandeiras ou o que cada um representa.",
+      ),
       url: "https://emojionado.com?from=boludeando",
       preview: <EmojionadoPreview scale={scale} />,
     },
     {
       name: "Tuttifrutalo",
-      description: "Elegís una letra y, contrarreloj, completás una palabra por cada categoría que empiece con esa letra.",
+      description: d(
+        "Elegís una letra y, contrarreloj, completás una palabra por cada categoría que empiece con esa letra.",
+        "Pick a letter and, against the clock, complete a word for each category that starts with that letter.",
+        "Escolha uma letra e, contra o tempo, complete uma palavra para cada categoria que comece com essa letra.",
+      ),
       url: "https://tuttifrutalo.com?from=boludeando",
       preview: <TuttifrutaloPreview scale={scale} />,
     },
@@ -198,7 +242,7 @@ export default function Home() {
               </Box>
 
               <Typography sx={{ color: "#777", fontSize: 11, lineHeight: 1.35, flex: 1 }}>
-                {game.description}
+                {game.description[currentLanguage as keyof LocalizedDescription] ?? game.description.es}
               </Typography>
 
               <Box
