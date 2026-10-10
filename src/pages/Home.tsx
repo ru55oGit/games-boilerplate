@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import LanguageSelector from "../components/LanguageSelector";
-import AdSlotAvailableBanner from "../ads/AdSlotAvailableBanner";
+import HubAdPromoBanner from "../ads/HubAdPromoBanner";
 import { useLanguage } from "../i18n/LanguageContext";
 import ImaginaloCarousel from "../components/ImaginaloCarousel";
 import {
@@ -82,7 +82,7 @@ function buildGames(scale: number): GameEntry[] {
 }
 
 export default function Home() {
-  const { t } = useLanguage();
+  const { t, currentLanguage } = useLanguage();
   // Media query fija (mismo corte que el breakpoint "md" de MUI) en vez de
   // theme.breakpoints.up("md"): esta app no tiene ThemeProvider, y useTheme()
   // creando el theme por default rompía el bundle de Vite.
@@ -215,8 +215,8 @@ export default function Home() {
             reemplaza por una campaña comprada. Siempre hay un lugar visible
             para que alguien descubra que puede anunciar en la hub, incluso
             si todos los slots de verdad de los juegos ya están vendidos
-            (2026-10-09). */}
-        <AdSlotAvailableBanner weeklyPrice={1000} />
+            (2026-10-09). Doble, con los 3 precios reales (2026-10-10). */}
+        <HubAdPromoBanner locale={currentLanguage} />
       </Box>
     </Layout>
   );
