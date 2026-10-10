@@ -1,14 +1,28 @@
+// Copiado de boludeando-ads/sdk/boludeando-ads-client/src/ShareButtons.tsx el 2026-10-10.
 import Box from "@mui/material/Box";
 
 // Solo WhatsApp y Facebook: son las dos redes con un link de "compartir"
 // real que abre con el texto/URL precargado. Instagram no tiene equivalente
 // (no existe un instagram.com/share?... web) — se descartó, no es una
-// limitación de este código sino de la plataforma.
+// limitación de este código sino de la plataforma. Comparte siempre el hub
+// (boludeando.com), no el juego puntual donde se clickea — por eso no
+// depende del Translation de cada juego, trae su propio diccionario chico
+// (mismo alcance es/en/pt que adFallbackCopy.ts; fr/de caen a español).
 const HUB_URL = "https://www.boludeando.com";
 
-interface ShareButtonsProps {
+interface ShareCopy {
   label: string;
   shareText: string;
+}
+
+const COPY: Record<string, ShareCopy> = {
+  es: { label: "Compartí Boludeando", shareText: "Boludeando — Juegos mentales en vez de scroll infinito 🧠" },
+  en: { label: "Share Boludeando", shareText: "Boludeando — Mental games instead of infinite scroll 🧠" },
+  pt: { label: "Compartilhe o Boludeando", shareText: "Boludeando — Jogos mentais em vez de scroll infinito 🧠" },
+};
+
+function getCopy(locale: string | undefined): ShareCopy {
+  return COPY[locale ?? "es"] ?? COPY.es;
 }
 
 function whatsappShareUrl(shareText: string): string {
@@ -19,14 +33,20 @@ function facebookShareUrl(): string {
   return `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(HUB_URL)}`;
 }
 
-export default function ShareButtons({ label, shareText }: ShareButtonsProps) {
+interface ShareButtonsProps {
+  locale?: string;
+}
+
+export default function ShareButtons({ locale }: ShareButtonsProps) {
+  const copy = getCopy(locale);
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 1.5, mt: 3 }}>
-      <Box sx={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.7)" }}>{label}</Box>
+      <Box sx={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.7)" }}>{copy.label}</Box>
       <Box sx={{ display: "flex", gap: 1.5 }}>
         <Box
           component="a"
-          href={whatsappShareUrl(shareText)}
+          href={whatsappShareUrl(copy.shareText)}
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Compartir por WhatsApp"

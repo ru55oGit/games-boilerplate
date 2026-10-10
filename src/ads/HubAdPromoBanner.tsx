@@ -1,3 +1,4 @@
+// Copiado de boludeando-ads/sdk/boludeando-ads-client/src/HubAdPromoBanner.tsx el 2026-10-10.
 import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 
