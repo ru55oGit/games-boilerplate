@@ -5,6 +5,7 @@ import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import LanguageSelector from "../components/LanguageSelector";
 import HubAdPromoBanner from "../ads/HubAdPromoBanner";
+import ShareButtons from "../components/ShareButtons";
 import { useLanguage } from "../i18n/LanguageContext";
 import ImaginaloCarousel from "../components/ImaginaloCarousel";
 import {
@@ -217,6 +218,7 @@ export default function Home() {
             si todos los slots de verdad de los juegos ya están vendidos
             (2026-10-09). Doble, con los 3 precios reales (2026-10-10). */}
         <HubAdPromoBanner locale={currentLanguage} />
+        <ShareButtons label={t.shareLabel} shareText={t.shareText} />
       </Box>
     </Layout>
   );
