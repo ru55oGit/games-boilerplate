@@ -143,11 +143,17 @@ export default function Home() {
         </Typography>
 
         <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1.25 }}>
-          {games.map((game) => (
+          {games.map((game) => {
+            // Imaginalo no tiene contenido armado en portugués todavía (ver
+            // memoria del proyecto) — en vez de mandar a un jugador PT a un
+            // juego que se le va a mostrar en otro idioma, se deshabilita la
+            // card entera mientras currentLanguage sea "pt" (2026-10-10).
+            const isUnavailable = currentLanguage === "pt" && game.name === "Imaginalo";
+            return (
             <Box
               key={game.name}
-              component="a"
-              href={game.url}
+              component={isUnavailable ? "div" : "a"}
+              href={isUnavailable ? undefined : game.url}
               sx={{
                 textDecoration: "none",
                 borderRadius: 4,
@@ -158,7 +164,9 @@ export default function Home() {
                 p: 1.25,
                 boxShadow: "0 6px 16px rgba(0,0,0,0.14)",
                 transition: "transform 0.15s ease",
-                "&:active": { transform: "scale(0.98)" },
+                opacity: isUnavailable ? 0.5 : 1,
+                cursor: isUnavailable ? "not-allowed" : "pointer",
+                "&:active": { transform: isUnavailable ? "none" : "scale(0.98)" },
               }}
             >
               <Typography
@@ -197,7 +205,7 @@ export default function Home() {
                 sx={{
                   alignSelf: "center",
                   borderRadius: 999,
-                  backgroundColor: "#e74c3c",
+                  backgroundColor: isUnavailable ? "#aaa" : "#e74c3c",
                   color: "#fff",
                   fontWeight: 700,
                   fontSize: 12,
@@ -206,10 +214,11 @@ export default function Home() {
                   mt: 0.25,
                 }}
               >
-                {t.playButton}
+                {isUnavailable ? "Não disponível em PT" : t.playButton}
               </Box>
             </Box>
-          ))}
+            );
+          })}
         </Box>
 
         {/* Banner fijo "anunciá acá" — no es un ad_slot real, nunca se

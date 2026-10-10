@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 
 // Banner fijo del hub (no es un ad_slot real, ver Home.tsx) que invita a
@@ -12,7 +13,6 @@ import Box from "@mui/material/Box";
 const SIGNUP_URL = "https://ads-api.boludeando.com/login";
 
 interface HubAdPromoCopy {
-  kicker: string;
   headline: string;
   perWeek: string;
   tierLabels: [string, string, string];
@@ -21,21 +21,18 @@ interface HubAdPromoCopy {
 
 const COPY: Record<string, HubAdPromoCopy> = {
   es: {
-    kicker: "Espacio publicitario disponible",
     headline: "Anunciá en los juegos de Boludeando",
     perWeek: "/sem",
     tierLabels: ["Banner", "Banner doble", "Rewarded"],
     ariaLabel: "Anunciá en los juegos de Boludeando — planes desde $1000 por semana",
   },
   en: {
-    kicker: "Advertising space available",
     headline: "Advertise across Boludeando's games",
     perWeek: "/wk",
     tierLabels: ["Banner", "Double banner", "Rewarded"],
     ariaLabel: "Advertise across Boludeando's games — plans from $1000 a week",
   },
   pt: {
-    kicker: "Espaço publicitário disponível",
     headline: "Anuncie nos jogos do Boludeando",
     perWeek: "/sem",
     tierLabels: ["Banner", "Banner duplo", "Recompensado"],
@@ -49,6 +46,100 @@ function getCopy(locale: string | undefined): HubAdPromoCopy {
 
 const TIER_PRICES = [1000, 2000, 3500];
 
+// Dominios reales de los 8 juegos (mismo listado que GAMES en
+// boludeando-ads/src/pages/CampaignDetail.tsx — emojinalo es el único caso
+// donde el slug interno difiere del dominio en vivo, emojionado.com).
+const GAME_URLS = [
+  "viborealo.com",
+  "letris.net",
+  "ensopalo.com",
+  "enganchalo.com",
+  "enroscado.com",
+  "tuttifrutalo.com",
+  "imaginaloapp.com",
+  "emojionado.com",
+];
+
+// Misma paleta de 5 colores del logo BOLUDEANDO (og-image.jpg), ciclando
+// letra por letra.
+const TILE_COLORS = ["#e24b3f", "#f0b429", "#3f9e5e", "#4f7fd1", "#9b5fc0"];
+
+// Tiles chicos (no el tamaño hero del logo) para que hasta el dominio más
+// largo (tuttifrutalo.com, 16 caracteres) entre en una sola línea sin
+// desbordar el banner en mobile. El "." se muestra como un puntito, no como
+// un tile de letra — ocupar lo mismo que una letra ahí se ve raro y suma
+// ancho innecesario.
+function TileWord({ text }: { text: string }) {
+  return (
+    <Box sx={{ display: "flex", alignItems: "flex-end", gap: "2px" }}>
+      {[...text].map((ch, i) =>
+        ch === "." ? (
+          <Box
+            key={i}
+            sx={{
+              width: { xs: 5, sm: 6 },
+              height: { xs: 5, sm: 6 },
+              borderRadius: "50%",
+              backgroundColor: TILE_COLORS[i % TILE_COLORS.length],
+              mb: { xs: "8px", sm: "10px" },
+              flexShrink: 0,
+            }}
+          />
+        ) : (
+          <Box
+            key={i}
+            sx={{
+              display: "grid",
+              placeItems: "center",
+              width: { xs: 18, sm: 24 },
+              height: { xs: 25, sm: 33 },
+              borderRadius: { xs: "5px", sm: "6px" },
+              backgroundColor: TILE_COLORS[i % TILE_COLORS.length],
+              color: "#fff",
+              fontWeight: 900,
+              fontSize: { xs: 13, sm: 17 },
+              textTransform: "uppercase",
+              boxShadow: "inset 0 -2px 0 rgba(0,0,0,0.18)",
+              flexShrink: 0,
+            }}
+          >
+            {ch}
+          </Box>
+        ),
+      )}
+    </Box>
+  );
+}
+
+const ROTATE_INTERVAL_MS = 2400;
+const EXIT_DURATION_MS = 500;
+
+// Mismo mecanismo de fade-up que useRotatingLine en AdSlotAvailableBanner
+// (SDK de boludeando-ads): la línea saliente sube y se desvanece, la
+// entrante sube desde abajo.
+function useRotatingIndex(count: number) {
+  const [index, setIndex] = useState(0);
+  const [exitingIndex, setExitingIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    const rotate = setInterval(() => {
+      setIndex((current) => {
+        setExitingIndex(current);
+        return (current + 1) % count;
+      });
+    }, ROTATE_INTERVAL_MS);
+    return () => clearInterval(rotate);
+  }, [count]);
+
+  useEffect(() => {
+    if (exitingIndex === null) return;
+    const clear = setTimeout(() => setExitingIndex(null), EXIT_DURATION_MS);
+    return () => clearTimeout(clear);
+  }, [exitingIndex]);
+
+  return { index, exitingIndex };
+}
+
 interface HubAdPromoBannerProps {
   locale?: string;
   accentColor?: string;
@@ -58,6 +149,7 @@ interface HubAdPromoBannerProps {
 export default function HubAdPromoBanner({ locale, accentColor = "#e74c3c", inkColor = "#3a1512" }: HubAdPromoBannerProps) {
   const copy = getCopy(locale);
   const paper = "#fff8f3";
+  const { index, exitingIndex } = useRotatingIndex(GAME_URLS.length);
 
   return (
     <Box
@@ -75,7 +167,7 @@ export default function HubAdPromoBanner({ locale, accentColor = "#e74c3c", inkC
         width: "100%",
         mx: "auto",
         boxSizing: "border-box",
-        minHeight: 190,
+        minHeight: 206,
         p: "18px 20px",
         backgroundColor: paper,
         borderRadius: "24px",
@@ -97,25 +189,43 @@ export default function HubAdPromoBanner({ locale, accentColor = "#e74c3c", inkC
         },
       }}
     >
-      <Box>
-        <Box component="span" sx={{ display: "block", fontSize: 13, fontWeight: 700, color: `${inkColor}99`, mb: 0.5 }}>
-          {copy.kicker}
-        </Box>
-        <Box
-          component="span"
-          sx={{
-            display: "-webkit-box",
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical",
-            overflow: "hidden",
-            fontSize: 20,
-            lineHeight: "26px",
-            fontWeight: 900,
-            letterSpacing: "-0.01em",
-          }}
-        >
-          {copy.headline}
-        </Box>
+      <Box
+        component="span"
+        sx={{
+          display: "-webkit-box",
+          WebkitLineClamp: 2,
+          WebkitBoxOrient: "vertical",
+          overflow: "hidden",
+          fontSize: 20,
+          lineHeight: "26px",
+          fontWeight: 900,
+          letterSpacing: "-0.01em",
+        }}
+      >
+        {copy.headline}
+      </Box>
+
+      <Box sx={{ position: "relative", height: { xs: 30, sm: 38 }, overflow: "hidden" }}>
+        {GAME_URLS.map((url, i) => {
+          const isIn = i === index;
+          const isOut = i === exitingIndex;
+          return (
+            <Box
+              key={url}
+              sx={{
+                position: "absolute",
+                inset: 0,
+                display: "flex",
+                justifyContent: "center",
+                transform: isIn ? "translateY(0)" : isOut ? "translateY(-110%)" : "translateY(110%)",
+                opacity: isIn ? 1 : 0,
+                transition: "transform 0.45s cubic-bezier(.2,.8,.2,1), opacity 0.3s",
+              }}
+            >
+              <TileWord text={url} />
+            </Box>
+          );
+        })}
       </Box>
 
       <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 1 }}>

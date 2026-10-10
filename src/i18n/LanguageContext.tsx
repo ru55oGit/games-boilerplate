@@ -24,11 +24,14 @@ const LanguageContext = createContext<LanguageContextType | undefined>(
 
 const LANGUAGE_STORAGE_KEY = "emojinalo_language";
 
+// fr se saca del selector (2026-10-10) — se deja la traducción en
+// translations.ts por si se reactiva más adelante, mismo patrón ya usado en
+// sopaloReact/enroscaloReact/emojinaloReact.
 export const availableLanguages = [
   { code: "es" as SupportedLanguage, name: "Español", flag: "🇦🇷" },
   { code: "en" as SupportedLanguage, name: "English", flag: "🇺🇸" },
   { code: "pt" as SupportedLanguage, name: "Português", flag: "🇧🇷" },
-  { code: "fr" as SupportedLanguage, name: "Français", flag: "🇫🇷" },
+  // { code: "fr" as SupportedLanguage, name: "Français", flag: "🇫🇷" },
 ];
 
 interface LanguageProviderProps {
