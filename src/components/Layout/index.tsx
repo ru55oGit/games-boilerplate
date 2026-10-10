@@ -148,7 +148,7 @@ const Layout: React.FC<LayoutProps> = ({ children, showFooter = true }) => {
             zIndex: 5,
           }}
         >
-          © {new Date().getFullYear()} Mis Juegos
+          © {new Date().getFullYear()} Boludeando
         </Box>
       )}
     </Box>
