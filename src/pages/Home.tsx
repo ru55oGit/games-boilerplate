@@ -169,19 +169,6 @@ export default function Home() {
           {t.tagline}
         </Typography>
 
-        <Typography
-          sx={{
-            color: "rgba(255, 255, 255, 0.85)",
-            fontSize: { xs: 13, sm: 14 },
-            lineHeight: 1.6,
-            textAlign: "center",
-            maxWidth: 640,
-            mx: "auto",
-          }}
-        >
-          {t.manifesto}
-        </Typography>
-
         <Typography sx={{ color: "#fff", fontWeight: 700, fontSize: { xs: 20, sm: 24 }, textAlign: "center" }}>
           {t.subtitle}
         </Typography>
@@ -264,6 +251,19 @@ export default function Home() {
             );
           })}
         </Box>
+
+        <Typography
+          sx={{
+            color: "rgba(255, 255, 255, 0.85)",
+            fontSize: { xs: 13, sm: 14 },
+            lineHeight: 1.6,
+            textAlign: "center",
+            maxWidth: 640,
+            mx: "auto",
+          }}
+        >
+          {t.manifesto}
+        </Typography>
 
         {/* Banner fijo "anunciá acá" — no es un ad_slot real, nunca se
             reemplaza por una campaña comprada. Siempre hay un lugar visible

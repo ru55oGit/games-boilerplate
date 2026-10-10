@@ -74,11 +74,25 @@ const GAME_URLS = [
 const TILE_COLORS = ["#e24b3f", "#f0b429", "#3f9e5e", "#4f7fd1", "#9b5fc0"];
 
 // Tiles chicos (no el tamaño hero del logo) para que hasta el dominio más
-// largo (tuttifrutalo.com, 16 caracteres) entre en una sola línea sin
-// desbordar el banner en mobile. El "." se muestra como un puntito, no como
-// un tile de letra — ocupar lo mismo que una letra ahí se ve raro y suma
-// ancho innecesario.
+// largo entre en una sola línea sin desbordar el banner en mobile. El "."
+// se muestra como un puntito, no como un tile de letra — ocupar lo mismo
+// que una letra ahí se ve raro y suma ancho innecesario.
+//
+// Tamaño fijo para todos los dominios desbordaba en mobile a los dos más
+// largos (tuttifrutalo.com/imaginaloapp.com, 16 caracteres): el contenedor
+// centra el texto y recorta por los dos lados (overflow:hidden en el
+// rotador), así que se perdía una letra de cada punta. En vez de achicar
+// todos los dominios al tamaño del peor caso (ilegible en los cortos, que
+// sí entraban bien), el tile se dimensiona según el largo de cada palabra.
+function tileSizeFor(length: number) {
+  if (length >= 14) {
+    return { width: { xs: 15, sm: 20 }, height: { xs: 21, sm: 27 }, font: { xs: 11, sm: 14 }, radius: { xs: "4px", sm: "5px" } };
+  }
+  return { width: { xs: 18, sm: 24 }, height: { xs: 25, sm: 33 }, font: { xs: 13, sm: 17 }, radius: { xs: "5px", sm: "6px" } };
+}
+
 function TileWord({ text }: { text: string }) {
+  const size = tileSizeFor(text.length);
   return (
     <Box sx={{ display: "flex", alignItems: "flex-end", gap: "2px" }}>
       {[...text].map((ch, i) =>
@@ -86,11 +100,11 @@ function TileWord({ text }: { text: string }) {
           <Box
             key={i}
             sx={{
-              width: { xs: 5, sm: 6 },
-              height: { xs: 5, sm: 6 },
+              width: { xs: size.width.xs / 3.5, sm: size.width.sm / 3.5 },
+              height: { xs: size.width.xs / 3.5, sm: size.width.sm / 3.5 },
               borderRadius: "50%",
               backgroundColor: TILE_COLORS[i % TILE_COLORS.length],
-              mb: { xs: "8px", sm: "10px" },
+              mb: { xs: `${size.height.xs * 0.3}px`, sm: `${size.height.sm * 0.3}px` },
               flexShrink: 0,
             }}
           />
@@ -100,13 +114,13 @@ function TileWord({ text }: { text: string }) {
             sx={{
               display: "grid",
               placeItems: "center",
-              width: { xs: 18, sm: 24 },
-              height: { xs: 25, sm: 33 },
-              borderRadius: { xs: "5px", sm: "6px" },
+              width: size.width,
+              height: size.height,
+              borderRadius: size.radius,
               backgroundColor: TILE_COLORS[i % TILE_COLORS.length],
               color: "#fff",
               fontWeight: 900,
-              fontSize: { xs: 13, sm: 17 },
+              fontSize: size.font,
               textTransform: "uppercase",
               boxShadow: "inset 0 -2px 0 rgba(0,0,0,0.18)",
               flexShrink: 0,
