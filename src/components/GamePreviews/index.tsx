@@ -106,7 +106,25 @@ export function EnganchaloPreview({ scale = 1 }: ScaleProps) {
 export function EnroscadoPreview({ scale = 1 }: ScaleProps) {
   const size = 120 * scale;
   const dotSize = 18 * scale;
-  const radius = size / 2 - 3; // -3 (grosor del borde): las letras quedan apoyadas sobre la línea del círculo, como en un rosco real
+  // Bien grueso a propósito — más ancho que el diámetro de un punto, así
+  // tapa parte de las letras (como en la referencia) en vez de solo
+  // asomar en los bordes.
+  const ringWidth = dotSize * 1.3;
+  // Mismo radio para el <circle> del SVG y para las letras — así el trazo
+  // del aro pasa matemáticamente por el centro exacto de cada punto, sin
+  // depender de box-sizing/border de CSS (ahí es donde fallaban los
+  // intentos anteriores: dos elementos distintos con offsets calculados
+  // por separado, que nunca terminaban de coincidir a simple vista).
+  const radius = size / 2 - dotSize / 2;
+  // El trazo del aro (ringWidth, grueso a propósito) sobresale del
+  // círculo de radio `radius` — si el <svg> mide exactamente `size`, ese
+  // sobrante se recorta justo en los 4 puntos cardinales (donde el aro
+  // llega más lejos del centro en línea recta). El lienzo del SVG tiene
+  // que ser más grande que `size` para que quepa entero; el Box de afuera
+  // se queda en `size` (el tamaño que espera el resto del layout) y el
+  // SVG se centra encima con un offset negativo.
+  const svgSize = size + ringWidth;
+  const svgOffset = (svgSize - size) / 2;
   const letters = "ABCDEFGHIJKLMNOP".split(""); // 16 en vez de 26, para que se note el espacio entre los puntos
   const statusColor = (i: number) => {
     if (i < 4) return "#2ecc71"; // correcta
@@ -114,7 +132,10 @@ export function EnroscadoPreview({ scale = 1 }: ScaleProps) {
     return "#1565c0"; // pendiente
   };
   return (
-    <Box sx={{ position: "relative", width: size, height: size, borderRadius: "50%", border: "3px solid rgba(21,101,192,0.24)", backgroundColor: "#fff" }}>
+    <Box sx={{ position: "relative", width: size, height: size }}>
+      <svg width={svgSize} height={svgSize} style={{ position: "absolute", top: -svgOffset, left: -svgOffset }}>
+        <circle cx={svgSize / 2} cy={svgSize / 2} r={radius} fill="none" stroke="#d8e6f8" strokeWidth={ringWidth} />
+      </svg>
       {letters.map((letter, i) => {
         const angle = (i / letters.length) * 2 * Math.PI - Math.PI / 2;
         const x = size / 2 + radius * Math.cos(angle);
