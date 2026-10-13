@@ -184,7 +184,7 @@ export default function Home() {
             <Box
               key={game.name}
               component={isUnavailable ? "div" : "a"}
-              href={isUnavailable ? undefined : game.url}
+              href={isUnavailable ? undefined : `${game.url}&lang=${currentLanguage}`}
               sx={{
                 textDecoration: "none",
                 borderRadius: 4,
