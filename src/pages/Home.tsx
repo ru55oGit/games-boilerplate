@@ -7,6 +7,7 @@ import LanguageSelector from "../components/LanguageSelector";
 import HubAdPromoBanner from "../ads/HubAdPromoBanner";
 import ShareButtons from "../ads/ShareButtons";
 import { useLanguage } from "../i18n/LanguageContext";
+import { track } from "../lib/analytics";
 import ImaginaloCarousel from "../components/ImaginaloCarousel";
 import {
   TuttifrutaloPreview,
@@ -174,17 +175,24 @@ export default function Home() {
         </Typography>
 
         <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1.25 }}>
-          {games.map((game) => {
+          {games.map((game, position) => {
             // Imaginalo no tiene contenido armado en portugués todavía (ver
             // memoria del proyecto) — en vez de mandar a un jugador PT a un
             // juego que se le va a mostrar en otro idioma, se deshabilita la
             // card entera mientras currentLanguage sea "pt" (2026-10-10).
             const isUnavailable = currentLanguage === "pt" && game.name === "Imaginalo";
+            const gameSlug = game.name.toLowerCase();
+            // UTMs para distinguir en GA4 de cada juego cuánto tráfico viene
+            // específicamente del grid del hub (vs. directo, redes, etc.).
+            const href = isUnavailable
+              ? undefined
+              : `${game.url}&lang=${currentLanguage}&utm_source=boludeando&utm_medium=portal&utm_campaign=grid&utm_content=${gameSlug}`;
             return (
             <Box
               key={game.name}
               component={isUnavailable ? "div" : "a"}
-              href={isUnavailable ? undefined : `${game.url}&lang=${currentLanguage}`}
+              href={href}
+              onClick={isUnavailable ? undefined : () => track("select_game", { game_name: gameSlug, position })}
               sx={{
                 textDecoration: "none",
                 borderRadius: 4,
