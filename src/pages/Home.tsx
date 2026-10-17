@@ -194,6 +194,16 @@ export default function Home() {
               href={href}
               onClick={isUnavailable ? undefined : () => track("select_game", { game_name: gameSlug, position })}
               sx={{
+                // minWidth:0 es necesario porque este Box es un ítem de
+                // grid (1fr 1fr): sin esto, el default de CSS Grid es que
+                // un ítem nunca se achica más allá del ancho mínimo de su
+                // contenido (texto largo sin cómo cortar, el preview, etc),
+                // así que en pantallas angostas (ej. Galaxy Z Flip4
+                // desplegado, mucho más angosto que un teléfono normal) la
+                // grilla entera terminaba más ancha que la pantalla y la
+                // segunda columna se iba afuera — no se veía en el Fold5
+                // porque ahí sí sobraba ancho.
+                minWidth: 0,
                 textDecoration: "none",
                 borderRadius: 4,
                 backgroundColor: "#fff",
