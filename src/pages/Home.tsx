@@ -123,7 +123,7 @@ function buildGames(scale: number, lang: SupportedLanguage): GameEntry[] {
         "Escolha uma letra e, contra o tempo, complete uma palavra para cada categoria que comece com essa letra.",
       ),
       url: "https://tuttifrutalo.com?from=boludeando",
-      preview: <TuttifrutaloPreview scale={scale} />,
+      preview: <TuttifrutaloPreview scale={scale} lang={lang} />,
     },
   ];
 }

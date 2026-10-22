@@ -13,33 +13,59 @@ interface ScaleProps {
   scale?: number;
 }
 
-export function TuttifrutaloPreview({ scale = 1 }: ScaleProps) {
-  const entries = [
-    { label: "País", value: "Venezuela" },
-    { label: "Animal", value: "Vaca" },
-  ];
-  const circleSize = 44 * scale;
+// Letra V + 4 categorías de ejemplo, mismos datos que usa el propio demo de
+// tuttifrutaloReact (ver EXAMPLE_ENTRIES en su Home.tsx) + una 4ta
+// categoría (nombre) para completar las 4 que pidió el usuario.
+const TUTTIFRUTALO_CATEGORY_LABELS: Record<SupportedLanguage, Record<string, string>> = {
+  es: { pais: "País", animal: "Animal", color: "Color", nombre: "Nombre" },
+  en: { pais: "Country", animal: "Animal", color: "Color", nombre: "Name" },
+  pt: { pais: "País", animal: "Animal", color: "Cor", nombre: "Nome" },
+  // fr ya no está en el selector de idiomas (ver LanguageContext.tsx), pero
+  // el tipo lo sigue incluyendo por si queda guardado en localStorage.
+  fr: { pais: "Pays", animal: "Animal", color: "Couleur", nombre: "Prénom" },
+};
+const TUTTIFRUTALO_ANSWERS: Record<SupportedLanguage, Record<string, string>> = {
+  es: { pais: "Venezuela", animal: "Vaca", color: "Verde", nombre: "Valentina" },
+  en: { pais: "Venezuela", animal: "Vulture", color: "Violet", nombre: "Victoria" },
+  pt: { pais: "Venezuela", animal: "Vaca", color: "Verde", nombre: "Valentina" },
+  fr: { pais: "Venezuela", animal: "Vautour", color: "Violet", nombre: "Victoire" },
+};
+const TUTTIFRUTALO_CATEGORY_ORDER = ["pais", "animal", "color", "nombre"];
+
+interface TuttifrutaloPreviewProps extends ScaleProps {
+  lang?: SupportedLanguage;
+}
+
+export function TuttifrutaloPreview({ scale = 1, lang = "es" }: TuttifrutaloPreviewProps) {
+  const labels = TUTTIFRUTALO_CATEGORY_LABELS[lang] ?? TUTTIFRUTALO_CATEGORY_LABELS.es;
+  const answers = TUTTIFRUTALO_ANSWERS[lang] ?? TUTTIFRUTALO_ANSWERS.es;
+  const entries = TUTTIFRUTALO_CATEGORY_ORDER.map((key) => ({ label: labels[key], value: answers[key] }));
+  const circleSize = 32 * scale;
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 0.75, py: 1 }}>
+    <Box sx={{
+      width: "100%", height: "100%",
+      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start",
+      gap: 0.4 * scale, pt: 0.5,
+    }}>
       <Box
         sx={{
           width: circleSize, height: circleSize, borderRadius: "50%", backgroundColor: "#fff",
           border: `2px solid ${ACCENT}`, display: "flex", alignItems: "center", justifyContent: "center",
-          fontFamily: "monospace", fontWeight: 800, fontSize: 20 * scale, color: ACCENT,
+          fontFamily: "monospace", fontWeight: 800, fontSize: 15 * scale, color: ACCENT,
         }}
       >
         V
       </Box>
-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 * scale, justifyContent: "center" }}>
+      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 0.3 * scale }}>
         {entries.map((e) => (
           <Box
             key={e.label}
-            sx={{ backgroundColor: "#fff", border: "1px solid #e5e7eb", borderRadius: "999px", px: 1 * scale, py: 0.25 * scale }}
+            sx={{ backgroundColor: "#fff", border: "1px solid #e5e7eb", borderRadius: "999px", px: 1 * scale, py: 0.1 * scale }}
           >
-            <Typography sx={{ fontSize: 9 * scale, color: "#999", fontWeight: 700, textTransform: "uppercase", lineHeight: 1.2 }}>
+            <Typography sx={{ fontSize: 7 * scale, color: "#999", fontWeight: 700, textTransform: "uppercase", lineHeight: 1.1 }}>
               {e.label}
             </Typography>
-            <Typography sx={{ fontSize: 11 * scale, color: "#333", fontWeight: 700, lineHeight: 1.2 }}>
+            <Typography sx={{ fontSize: 9 * scale, color: "#333", fontWeight: 700, lineHeight: 1.1 }}>
               {e.value}
             </Typography>
           </Box>
