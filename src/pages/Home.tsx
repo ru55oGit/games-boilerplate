@@ -73,7 +73,7 @@ function buildGames(scale: number, lang: SupportedLanguage): GameEntry[] {
         "Caem fichas de letras estilo Tetris e você forma palavras conectando letras vizinhas.",
       ),
       url: "https://letris.net?from=boludeando",
-      preview: <LetrisPreview scale={scale} />,
+      preview: <LetrisPreview scale={scale} lang={lang} />,
     },
     {
       name: "Viborealo",

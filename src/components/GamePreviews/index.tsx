@@ -252,28 +252,99 @@ export function EnroscadoPreview({ scale = 1 }: ScaleProps) {
   );
 }
 
-export function LetrisPreview({ scale = 1 }: ScaleProps) {
-  const GRID: (string | null)[][] = [
-    ["L", "E", "T", "R", "I"],
-    ["A", null, "S", null, "S"],
-    [null, null, null, null, null],
-  ];
-  const selected = new Set(["0-0", "0-1", "0-2", "0-3", "0-4"]);
-  const cellSize = 22 * scale;
+// Tablero a mitad de partida: arriba cae una ficha en T (3 arriba + 1
+// colgando del medio, igual que una pieza real de Letris), y abajo un
+// tablero ya asentado con relleno disperso (no todas las celdas ocupadas,
+// como un juego real) con 2 filas resaltadas en verde deletreando "forma
+// palabras" — una palabra por fila, traducida por idioma.
+const LETRIS_WORDS: Record<SupportedLanguage, [string, string]> = {
+  es: ["FORMA", "PALABRAS"],
+  en: ["FORM", "WORDS"],
+  pt: ["FORME", "PALAVRAS"],
+  // fr ya no está en el selector de idiomas (ver LanguageContext.tsx), pero
+  // el tipo lo sigue incluyendo por si queda guardado en localStorage.
+  fr: ["FORME", "MOTS"],
+};
+const LETRIS_GRID_COLS = 8;
+const LETRIS_PIECE_COLOR = "#9b59b6";
+const LETRIS_FILLER_POOL = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+function randomLetrisFiller(): string {
+  return LETRIS_FILLER_POOL[Math.floor(Math.random() * LETRIS_FILLER_POOL.length)];
+}
+
+type LetrisCell = { letter: string; kind: "empty" | "piece" | "selected" | "filler" };
+
+function letrisEmptyRow(): LetrisCell[] {
+  return Array.from({ length: LETRIS_GRID_COLS }, () => ({ letter: "", kind: "empty" }));
+}
+
+// La palabra centrada y resaltada; el resto de la fila queda disperso —
+// alguna letra suelta, bastante vacío — en vez de completarla entera.
+function letrisWordRow(word: string): LetrisCell[] {
+  const start = Math.max(0, Math.floor((LETRIS_GRID_COLS - word.length) / 2));
+  return Array.from({ length: LETRIS_GRID_COLS }, (_, c) => {
+    const i = c - start;
+    if (i >= 0 && i < word.length) return { letter: word[i], kind: "selected" };
+    if (Math.random() < 0.45) return { letter: randomLetrisFiller(), kind: "filler" };
+    return { letter: "", kind: "empty" };
+  });
+}
+
+function letrisFillerRow(): LetrisCell[] {
+  return Array.from({ length: LETRIS_GRID_COLS }, () =>
+    Math.random() < 0.6 ? { letter: randomLetrisFiller(), kind: "filler" as const } : { letter: "", kind: "empty" as const },
+  );
+}
+
+interface LetrisPreviewProps extends ScaleProps {
+  lang?: SupportedLanguage;
+}
+
+export function LetrisPreview({ scale = 1, lang = "es" }: LetrisPreviewProps) {
+  const [word1, word2] = LETRIS_WORDS[lang] ?? LETRIS_WORDS.es;
+
+  const grid = useMemo(() => {
+    const rows: LetrisCell[][] = [];
+    rows.push(letrisEmptyRow()); // aire arriba de la pieza que cae
+
+    // Pieza en T: 3 celdas en fila + 1 colgando del medio.
+    const pieceRow = letrisEmptyRow();
+    const pieceCol = Math.floor(LETRIS_GRID_COLS / 2) - 1;
+    [0, 1, 2].forEach((i) => { pieceRow[pieceCol + i] = { letter: randomLetrisFiller(), kind: "piece" }; });
+    rows.push(pieceRow);
+    const nubRow = letrisEmptyRow();
+    nubRow[pieceCol + 1] = { letter: randomLetrisFiller(), kind: "piece" };
+    rows.push(nubRow);
+
+    rows.push(letrisFillerRow());
+    rows.push(letrisWordRow(word1));
+    rows.push(letrisFillerRow());
+    rows.push(letrisWordRow(word2));
+    rows.push(letrisFillerRow());
+
+    return rows;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [word1, word2]);
+
   return (
-    <Box sx={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: `${3 * scale}px` }}>
-      {GRID.map((row, r) =>
-        row.map((ch, c) => (
+    <Box sx={{ display: "grid", gridTemplateColumns: `repeat(${LETRIS_GRID_COLS}, 1fr)`, gap: `${2 * scale}px`, width: "100%" }}>
+      {grid.map((row, r) =>
+        row.map((cell, c) => (
           <Box
             key={`${r}-${c}`}
             sx={{
-              width: cellSize, height: cellSize, display: "flex", alignItems: "center", justifyContent: "center",
-              fontFamily: "monospace", fontSize: 12 * scale, fontWeight: 800, borderRadius: "4px",
-              backgroundColor: ch ? (selected.has(`${r}-${c}`) ? "#22c55e" : "#fce4e1") : "transparent",
-              color: ch ? (selected.has(`${r}-${c}`) ? "#fff" : ACCENT) : "transparent",
+              aspectRatio: "1", display: "flex", alignItems: "center", justifyContent: "center",
+              fontFamily: "monospace", fontSize: 10 * scale, fontWeight: 800, borderRadius: "3px",
+              backgroundColor:
+                cell.kind === "empty" ? "#f1f1f1"
+                : cell.kind === "piece" ? LETRIS_PIECE_COLOR
+                : cell.kind === "selected" ? "#22c55e"
+                : "#fce4e1",
+              color: cell.kind === "empty" ? "transparent" : cell.kind === "filler" ? ACCENT : "#fff",
             }}
           >
-            {ch ?? "·"}
+            {cell.letter}
           </Box>
         )),
       )}
