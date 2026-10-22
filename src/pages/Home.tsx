@@ -99,11 +99,11 @@ function buildGames(scale: number, lang: SupportedLanguage): GameEntry[] {
       name: "Enganchalo",
       description: d(
         "Encadená palabras: cada una empieza con la última sílaba de la anterior.",
-        "Chain words together: each one starts with the last syllable of the previous one.",
-        "Encadeie palavras: cada uma começa com a última sílaba da anterior.",
+        "Chain words together: each one starts with the last letter of the previous one.",
+        "Encadeie palavras: cada uma começa com a última letra da anterior.",
       ),
       url: "https://enganchalo.com?from=boludeando",
-      preview: <EnganchaloPreview scale={scale} />,
+      preview: <EnganchaloPreview scale={scale} lang={lang} />,
     },
     {
       name: "Emojionado",

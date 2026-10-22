@@ -120,8 +120,26 @@ export function EnsopaloPreview({ lang = "es" }: EnsopaloPreviewProps) {
   );
 }
 
-export function EnganchaloPreview({ scale = 1 }: ScaleProps) {
-  const words = ["CASA", "SAPO", "POZO"];
+// Cadena de ejemplo por idioma — en castellano se encadena por la última
+// sílaba (CA-SA, SA-PO, PO-ZO, mecánica real del juego en ese idioma); en
+// el resto el juego real encadena por la última LETRA en vez de sílaba
+// (ver getChallengeLetter en enganchadoReact/src/utils/wordEngineEn.ts /
+// wordEnginePt.ts), así que las palabras de ejemplo siguen esa otra regla.
+const ENGANCHALO_CHAINS: Record<SupportedLanguage, string[]> = {
+  es: ["CASA", "SAPO", "POZO"],
+  en: ["DOOR", "ROCK", "KITE"],
+  pt: ["CASA", "AMOR", "RIO"],
+  // fr ya no está en el selector de idiomas (ver LanguageContext.tsx), pero
+  // el tipo lo sigue incluyendo por si queda guardado en localStorage.
+  fr: ["PORTE", "ECOLE", "ETOILE"],
+};
+
+interface EnganchaloPreviewProps extends ScaleProps {
+  lang?: SupportedLanguage;
+}
+
+export function EnganchaloPreview({ scale = 1, lang = "es" }: EnganchaloPreviewProps) {
+  const words = ENGANCHALO_CHAINS[lang] ?? ENGANCHALO_CHAINS.es;
   return (
     <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "center", gap: 0.5 * scale }}>
       {words.map((w, i) => (
