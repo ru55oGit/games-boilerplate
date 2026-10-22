@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { SupportedLanguage } from "../../i18n/translations";
@@ -468,25 +468,116 @@ export function ViborealoPreview({ scale = 1, lang = "es" }: ViborealoPreviewPro
   );
 }
 
-export function EmojionadoPreview({ scale = 1 }: ScaleProps) {
-  const EMOJI = "😀";
-  const DIFFERENT = "😄";
-  const cells = Array.from({ length: 9 }, (_, i) => (i === 4 ? DIFFERENT : EMOJI));
-  const cellSize = 26 * scale;
+// Carrusel de escenas reales del juego (mismo criterio que
+// ImaginaloCarousel): grilla de 16 emoji con una celda resaltada, un
+// título chico arriba que cambia según la mecánica real de esa ronda —
+// "encontrá el diferente" no es la única variante, también está "encontrá
+// el que no pertenece" (grupo temático + 1 intruso) y "encontrá X"
+// (bandera/objeto puntual). Títulos largos, por eso van en fuente chica.
+interface EmojionadoScene {
+  titles: Record<SupportedLanguage, string>;
+  emojis: string[]; // 16, con el target ya insertado
+  targetIndex: number;
+}
+
+const EMOJIONADO_SCENES: EmojionadoScene[] = [
+  {
+    titles: {
+      es: "Encontrá el emoji diferente",
+      en: "Find the different emoji",
+      pt: "Encontre o emoji diferente",
+      fr: "Trouve l'emoji différent",
+    },
+    emojis: ["🍒", "🍒", "🍒", "🍒", "🍒", "🍒", "🍒", "🍒", "🍒", "🍒", "🍒", "🍎", "🍒", "🍒", "🍒", "🍒"],
+    targetIndex: 11,
+  },
+  {
+    titles: {
+      es: "Encontrá el emoji diferente",
+      en: "Find the different emoji",
+      pt: "Encontre o emoji diferente",
+      fr: "Trouve l'emoji différent",
+    },
+    emojis: ["😒", "😒", "😒", "😒", "😒", "😒", "😒", "😏", "😒", "😒", "😒", "😒", "😒", "😒", "😒", "😒"],
+    targetIndex: 7,
+  },
+  {
+    titles: {
+      es: "Encontrá el que no pertenece",
+      en: "Find the one that doesn't belong",
+      pt: "Encontre o que não pertence",
+      fr: "Trouve l'intrus",
+    },
+    emojis: ["🌸", "🌱", "🍀", "🥀", "🌻", "🌴", "🌾", "🌿", "🌷", "🍀", "🌹", "🌵", "🌷", "🌺", "🌳", "💗"],
+    targetIndex: 15,
+  },
+  {
+    titles: {
+      es: "Encontrá la bandera Argentina",
+      en: "Find the Argentina flag",
+      pt: "Encontre a bandeira da Argentina",
+      fr: "Trouve le drapeau argentin",
+    },
+    emojis: ["🇬🇭", "🇰🇷", "🇨🇲", "🇩🇰", "🇸🇳", "🇦🇷", "🇧🇪", "🇳🇱", "🇸🇦", "🇳🇴", "🇷🇸", "🇭🇺", "🇨🇴", "🇺🇦", "🇨🇭", "🇫🇮"],
+    targetIndex: 5,
+  },
+  {
+    titles: {
+      es: "Encontrá la uva",
+      en: "Find the grapes",
+      pt: "Encontre a uva",
+      fr: "Trouve le raisin",
+    },
+    emojis: ["⚽", "🐰", "🦭", "🐨", "🥜", "🍎", "🍇", "🫑", "🦌", "🥑", "🥏", "🏒", "♟️", "🦞", "🐛", "🦟"],
+    targetIndex: 6,
+  },
+];
+const EMOJIONADO_ROTATE_MS = 2400;
+
+interface EmojionadoPreviewProps extends ScaleProps {
+  lang?: SupportedLanguage;
+}
+
+export function EmojionadoPreview({ scale = 1, lang = "es" }: EmojionadoPreviewProps) {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => setIndex((i) => (i + 1) % EMOJIONADO_SCENES.length), EMOJIONADO_ROTATE_MS);
+    return () => clearInterval(id);
+  }, []);
+
+  const scene = EMOJIONADO_SCENES[index];
+  const title = scene.titles[lang] ?? scene.titles.es;
+
   return (
-    <Box sx={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: `${4 * scale}px` }}>
-      {cells.map((e, i) => (
-        <Box
-          key={i}
-          sx={{
-            width: cellSize, height: cellSize, display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 16 * scale, borderRadius: "6px", backgroundColor: i === 4 ? `${ACCENT}18` : "#f5f5f5",
-            border: i === 4 ? `1.5px solid ${ACCENT}` : "none",
-          }}
-        >
-          {e}
+    <Box
+      sx={{
+        width: "100%", height: "100%",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        "& .fade-in": { animation: "emojionadoFadeIn 0.4s ease" },
+        "@keyframes emojionadoFadeIn": { "0%": { opacity: 0 }, "100%": { opacity: 1 } },
+      }}
+    >
+      <Box key={index} className="fade-in" sx={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", gap: 0.5 * scale }}>
+        <Typography sx={{ fontSize: 8 * scale, color: "#999", fontWeight: 700, textAlign: "center", lineHeight: 1.25, px: 0.5 }}>
+          {title}
+        </Typography>
+        <Box sx={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: `${3 * scale}px`, width: "90%" }}>
+          {scene.emojis.map((e, i) => (
+            <Box
+              key={i}
+              sx={{
+                aspectRatio: "1", display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 13 * scale, borderRadius: "6px",
+                backgroundColor: i === scene.targetIndex ? `${ACCENT}18` : "#f5f5f5",
+                border: i === scene.targetIndex ? `1.5px solid ${ACCENT}` : "none",
+              }}
+            >
+              {e}
+            </Box>
+          ))}
         </Box>
-      ))}
+      </Box>
     </Box>
   );
 }

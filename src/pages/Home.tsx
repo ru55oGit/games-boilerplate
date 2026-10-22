@@ -113,7 +113,7 @@ function buildGames(scale: number, lang: SupportedLanguage): GameEntry[] {
         "Escolha uma categoria de charadas com emojis: encontrar o diferente, adivinhar filmes, bandeiras ou o que cada um representa.",
       ),
       url: "https://emojionado.com?from=boludeando",
-      preview: <EmojionadoPreview scale={scale} />,
+      preview: <EmojionadoPreview scale={scale} lang={lang} />,
     },
     {
       name: "Tuttifrutalo",
