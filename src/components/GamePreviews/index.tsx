@@ -1,5 +1,7 @@
+import { useMemo } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import { SupportedLanguage } from "../../i18n/translations";
 
 const ACCENT = "#e74c3c";
 
@@ -47,19 +49,59 @@ export function TuttifrutaloPreview({ scale = 1 }: ScaleProps) {
   );
 }
 
-export function EnsopaloPreview() {
-  const GRID = [
-    "XPQRSAT",
-    "AZOMEAT",
-    "LFOUNDL",
-    "AZBQSDE",
-    "BFOUNDT",
-    "RQXPZAM",
-  ];
-  const found = new Set(["2-1", "2-2", "2-3", "2-4", "2-5", "4-1", "4-2", "4-3", "4-4", "4-5"]);
+// "Sopa de letras" / "Word search" / "Caça-palavras" — una fila resaltada
+// por palabra, centrada en una grilla de ancho fijo (8, lo justo para que
+// entre "PALAVRAS" sin recortar). El resto se rellena con letras al azar.
+const ENSOPALO_WORDS: Record<SupportedLanguage, string[]> = {
+  es: ["SOPA", "DE", "LETRAS"],
+  en: ["WORD", "SEARCH"],
+  pt: ["CAÇA", "PALAVRAS"],
+  // fr ya no está en el selector de idiomas (ver LanguageContext.tsx), pero
+  // el tipo lo sigue incluyendo por si queda guardado en localStorage.
+  fr: ["MOTS", "MÊLÉS"],
+};
+const FILLER_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const ENSOPALO_GRID_WIDTH = 8;
+
+function randomFillerLetter(): string {
+  return FILLER_LETTERS[Math.floor(Math.random() * FILLER_LETTERS.length)];
+}
+
+interface EnsopaloPreviewProps {
+  lang?: SupportedLanguage;
+}
+
+export function EnsopaloPreview({ lang = "es" }: EnsopaloPreviewProps) {
+  const words = ENSOPALO_WORDS[lang] ?? ENSOPALO_WORDS.es;
+
+  const { grid, found } = useMemo(() => {
+    const rows: string[] = [];
+    const foundSet = new Set<string>();
+    const pushFillerRow = () => {
+      rows.push(Array.from({ length: ENSOPALO_GRID_WIDTH }, randomFillerLetter).join(""));
+    };
+    pushFillerRow();
+    words.forEach((word) => {
+      const start = Math.max(0, Math.floor((ENSOPALO_GRID_WIDTH - word.length) / 2));
+      const rowIndex = rows.length;
+      const chars = Array.from({ length: ENSOPALO_GRID_WIDTH }, (_, c) => {
+        const wordIndex = c - start;
+        if (wordIndex >= 0 && wordIndex < word.length) {
+          foundSet.add(`${rowIndex}-${c}`);
+          return word[wordIndex];
+        }
+        return randomFillerLetter();
+      });
+      rows.push(chars.join(""));
+      pushFillerRow();
+    });
+    return { grid: rows, found: foundSet };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [words.join("|")]);
+
   return (
-    <Box sx={{ display: "grid", gridTemplateColumns: `repeat(${GRID[0].length}, 1fr)`, gap: "2px", width: "100%" }}>
-      {GRID.map((row, r) =>
+    <Box sx={{ display: "grid", gridTemplateColumns: `repeat(${ENSOPALO_GRID_WIDTH}, 1fr)`, gap: "2px", width: "100%" }}>
+      {grid.map((row, r) =>
         [...row].map((ch, c) => (
           <Box
             key={`${r}-${c}`}

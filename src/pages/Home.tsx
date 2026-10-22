@@ -7,6 +7,7 @@ import LanguageSelector from "../components/LanguageSelector";
 import HubAdPromoBanner from "../ads/HubAdPromoBanner";
 import ShareButtons from "../ads/ShareButtons";
 import { useLanguage } from "../i18n/LanguageContext";
+import { SupportedLanguage } from "../i18n/translations";
 import { track } from "../lib/analytics";
 import ImaginaloCarousel from "../components/ImaginaloCarousel";
 import {
@@ -42,7 +43,7 @@ function d(es: string, en: string, pt: string): LocalizedDescription {
 // Los nombres (Imaginalo, Ensopalo, etc.) son marca propia, no se traducen.
 // `scale` agranda el contenido interno de los previews con tamaño fijo en
 // desktop (Ensopalo e Imaginalo ya escalan solos, por eso no lo reciben).
-function buildGames(scale: number): GameEntry[] {
+function buildGames(scale: number, lang: SupportedLanguage): GameEntry[] {
   return [
     {
       name: "Imaginalo",
@@ -62,7 +63,7 @@ function buildGames(scale: number): GameEntry[] {
         "Encontre palavras escondidas — na horizontal, vertical ou diagonal — numa caça-palavras nova todo dia.",
       ),
       url: "https://ensopalo.com?from=boludeando",
-      preview: <EnsopaloPreview />,
+      preview: <EnsopaloPreview lang={lang} />,
     },
     {
       name: "Letris",
@@ -133,7 +134,7 @@ export default function Home() {
   // theme.breakpoints.up("md"): esta app no tiene ThemeProvider, y useTheme()
   // creando el theme por default rompía el bundle de Vite.
   const isDesktop = useMediaQuery("(min-width:900px)");
-  const games = buildGames(isDesktop ? 1.6 : 1);
+  const games = buildGames(isDesktop ? 1.6 : 1, currentLanguage);
 
   return (
     <Layout showFooter>
