@@ -229,31 +229,108 @@ export function LetrisPreview({ scale = 1 }: ScaleProps) {
   );
 }
 
-export function ViborealoPreview({ scale = 1 }: ScaleProps) {
-  const cellSize = 22 * scale;
-  const cells: { letter: string; kind: "body" | "head" | "tile" }[] = [
-    { letter: "S", kind: "body" },
-    { letter: "O", kind: "body" },
-    { letter: "L", kind: "body" },
-    { letter: "", kind: "head" },
-    { letter: "A", kind: "tile" },
-  ];
+// "Forma palabras" / "Form words" / "Forme palavras" — la víbora (cuerpo
+// verde + cabeza roja) serpentea en forma de U (baja por la columna
+// izquierda, cruza por la fila de abajo, sube por la columna derecha) para
+// deletrear la frase — más parecido a un camino real de la víbora que un
+// zigzag fila por fila. Quedan algunas letras sueltas (fichas rosas, como
+// la comida del juego real) dispersas en las celdas libres del interior.
+// Las dos palabras por separado — entre una y otra va una "X" (ficha
+// marcador, no es parte de ninguna palabra) en vez de dejar un hueco.
+const VIBOREALO_WORDS: Record<SupportedLanguage, [string, string]> = {
+  es: ["FORMA", "PALABRAS"],
+  en: ["FORM", "WORDS"],
+  pt: ["FORME", "PALAVRAS"],
+  // fr ya no está en el selector de idiomas (ver LanguageContext.tsx), pero
+  // el tipo lo sigue incluyendo por si queda guardado en localStorage.
+  fr: ["FORME", "MOTS"],
+};
+const VIBOREALO_GRID_COLS = 5;
+const VIBOREALO_LOOSE_LETTERS = ["Q", "Z", "E"];
+
+// Baja por la col. 0, cruza la última fila, sube por la última columna —
+// la "U" del dibujo de referencia. Puede quedar más larga que lo que hace
+// falta (letras + cabeza); el resto simplemente no se usa.
+function buildStaplePath(rows: number, cols: number): { row: number; col: number }[] {
+  const path: { row: number; col: number }[] = [];
+  for (let r = 0; r < rows; r++) path.push({ row: r, col: 0 });
+  for (let c = 1; c < cols; c++) path.push({ row: rows - 1, col: c });
+  for (let r = rows - 2; r >= 0; r--) path.push({ row: r, col: cols - 1 });
+  return path;
+}
+
+interface ViborealoPreviewProps extends ScaleProps {
+  lang?: SupportedLanguage;
+}
+
+type ViborealoCell = { letter: string; kind: "body" | "head" | "tile" | "divider" };
+
+export function ViborealoPreview({ scale = 1, lang = "es" }: ViborealoPreviewProps) {
+  const [word1, word2] = VIBOREALO_WORDS[lang] ?? VIBOREALO_WORDS.es;
+  const cellSize = 20 * scale;
+
+  const { rows, cellAt } = useMemo(() => {
+    // Secuencia completa del cuerpo: palabra 1 + "X" separadora + palabra 2.
+    const sequence: { letter: string; kind: ViborealoCell["kind"] }[] = [
+      ...[...word1].map((letter) => ({ letter, kind: "body" as const })),
+      { letter: "X", kind: "divider" as const },
+      ...[...word2].map((letter) => ({ letter, kind: "body" as const })),
+    ];
+    const totalCells = sequence.length + 1; // secuencia + cabeza
+    const rowCount = Math.max(3, Math.ceil((totalCells - VIBOREALO_GRID_COLS + 2) / 2));
+    const grid: (ViborealoCell | null)[][] = Array.from(
+      { length: rowCount },
+      () => Array(VIBOREALO_GRID_COLS).fill(null),
+    );
+    const path = buildStaplePath(rowCount, VIBOREALO_GRID_COLS);
+
+    sequence.forEach((cell, i) => {
+      const { row, col } = path[i];
+      grid[row][col] = cell;
+    });
+    const headPos = path[sequence.length];
+    grid[headPos.row][headPos.col] = { letter: "", kind: "head" };
+
+    const freeCells: { row: number; col: number }[] = [];
+    grid.forEach((r, row) => r.forEach((cell, col) => { if (!cell) freeCells.push({ row, col }); }));
+    VIBOREALO_LOOSE_LETTERS.forEach((letter, i) => {
+      const pos = freeCells[Math.floor((i + 0.5) * (freeCells.length / VIBOREALO_LOOSE_LETTERS.length))];
+      if (pos) grid[pos.row][pos.col] = { letter, kind: "tile" };
+    });
+
+    return { rows: grid.length, cellAt: grid };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [word1, word2]);
+
   return (
-    <Box sx={{ display: "flex", gap: `${3 * scale}px` }}>
-      {cells.map((cell, i) => (
-        <Box
-          key={i}
-          sx={{
-            width: cellSize, height: cellSize, display: "flex", alignItems: "center", justifyContent: "center",
-            fontFamily: "monospace", fontSize: 12 * scale, fontWeight: 800,
-            borderRadius: cell.kind === "head" ? "30% 70% 70% 30%" : "4px",
-            backgroundColor: cell.kind === "body" ? "#22c55e" : cell.kind === "head" ? "#c0392b" : "#fce4e1",
-            color: cell.kind === "tile" ? ACCENT : "#fff",
-          }}
-        >
-          {cell.letter}
-        </Box>
-      ))}
+    <Box sx={{
+      display: "grid",
+      gridTemplateColumns: `repeat(${VIBOREALO_GRID_COLS}, ${cellSize}px)`,
+      gridTemplateRows: `repeat(${rows}, ${cellSize}px)`,
+      gap: `${3 * scale}px`,
+    }}>
+      {cellAt.map((row, r) =>
+        row.map((cell, c) => (
+          <Box
+            key={`${r}-${c}`}
+            sx={{
+              width: cellSize, height: cellSize, display: "flex", alignItems: "center", justifyContent: "center",
+              fontFamily: "monospace", fontSize: 11 * scale, fontWeight: 800,
+              borderRadius: cell?.kind === "head" ? "30% 70% 70% 30%" : "4px",
+              border: cell?.kind === "divider" ? `1px solid ${ACCENT}55` : "none",
+              backgroundColor:
+                !cell ? "transparent"
+                : cell.kind === "body" ? "#22c55e"
+                : cell.kind === "head" ? "#c0392b"
+                : cell.kind === "divider" ? "#ffffff"
+                : "#fce4e1",
+              color: cell?.kind === "tile" || cell?.kind === "divider" ? ACCENT : "#fff",
+            }}
+          >
+            {cell?.letter ?? ""}
+          </Box>
+        )),
+      )}
     </Box>
   );
 }

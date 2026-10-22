@@ -83,7 +83,7 @@ function buildGames(scale: number, lang: SupportedLanguage): GameEntry[] {
         "A cobrinha clássica: coma letras para somá-las ao corpo e forme palavras para fazê-las desaparecer e somar pontos.",
       ),
       url: "https://viborealo.com?from=boludeando",
-      preview: <ViborealoPreview scale={scale} />,
+      preview: <ViborealoPreview scale={scale} lang={lang} />,
     },
     {
       name: "Enroscado",
