@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { SupportedLanguage } from "../../i18n/translations";
@@ -468,100 +468,25 @@ export function ViborealoPreview({ scale = 1, lang = "es" }: ViborealoPreviewPro
   );
 }
 
-// Carrusel de 4 escenas — una por cada modo real de Emojionado (encontrar
-// el diferente, adivinar películas, banderas, qué representa) — mismo
-// criterio que ImaginaloCarousel. Sin traducciones: son solo emoji.
-const EMOJIONADO_EMOJI_POOL = ["😀", "😄", "😁", "😆", "😅", "🤩", "😎", "🙂", "🥳", "😊", "🤗", "😇", "🤠", "🥰", "😜", "🤓"];
-// Las banderas no tienen un "emoji distinto" real (el juego real te muestra
-// UNA bandera y adivinás el país) — para la escena del preview, en vez de
-// inventar una mecánica nueva, se reusa el mismo formato "encontrá X en la
-// grilla" de la primera escena, pero buscando una bandera en vez de un
-// emoji distinto.
-const EMOJIONADO_FLAG_POOL = ["🇦🇷", "🇧🇷", "🇺🇸", "🇫🇷", "🇯🇵", "🇮🇹", "🇪🇸", "🇩🇪", "🇲🇽", "🇨🇴"];
-// Combos de ejemplo para las escenas de "adiviná qué es" (películas /
-// objeto genérico) — no hace falta que sean exactos, son solo para variar.
-const EMOJIONADO_MOVIE_CLUES = ["🦁👑", "🕷️🧑", "❄️👸", "🦈🌊", "🚀👨‍🚀"];
-const EMOJIONADO_WHATIS_CLUES = ["🍕🧀", "🌧️☂️", "🎂🕯️", "📚🤓", "🌙⭐"];
-const EMOJIONADO_ROTATE_MS = 2200;
-
-function pickRandom<T>(pool: T[]): T {
-  return pool[Math.floor(Math.random() * pool.length)];
-}
-
-function pickTwoDistinct(pool: string[]): [string, string] {
-  const a = pickRandom(pool);
-  let b = pickRandom(pool);
-  while (b === a && pool.length > 1) b = pickRandom(pool);
-  return [a, b];
-}
-
-function EmojiGridScene({ baseEmoji, targetEmoji, scale }: { baseEmoji: string; targetEmoji: string; scale: number }) {
-  const targetIndex = 4;
+export function EmojionadoPreview({ scale = 1 }: ScaleProps) {
+  const EMOJI = "😀";
+  const DIFFERENT = "😄";
+  const cells = Array.from({ length: 9 }, (_, i) => (i === 4 ? DIFFERENT : EMOJI));
   const cellSize = 26 * scale;
   return (
     <Box sx={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: `${4 * scale}px` }}>
-      {Array.from({ length: 9 }, (_, i) => (
+      {cells.map((e, i) => (
         <Box
           key={i}
           sx={{
             width: cellSize, height: cellSize, display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 16 * scale, borderRadius: "6px",
-            backgroundColor: i === targetIndex ? `${ACCENT}18` : "#f5f5f5",
-            border: i === targetIndex ? `1.5px solid ${ACCENT}` : "none",
+            fontSize: 16 * scale, borderRadius: "6px", backgroundColor: i === 4 ? `${ACCENT}18` : "#f5f5f5",
+            border: i === 4 ? `1.5px solid ${ACCENT}` : "none",
           }}
         >
-          {i === targetIndex ? targetEmoji : baseEmoji}
+          {e}
         </Box>
       ))}
-    </Box>
-  );
-}
-
-function EmojiClueScene({ emojis, scale }: { emojis: string; scale: number }) {
-  return <Typography sx={{ fontSize: 30 * scale, lineHeight: 1 }}>{emojis}</Typography>;
-}
-
-export function EmojionadoPreview({ scale = 1 }: ScaleProps) {
-  const [index, setIndex] = useState(0);
-
-  useEffect(() => {
-    const id = setInterval(() => setIndex((i) => (i + 1) % 4), EMOJIONADO_ROTATE_MS);
-    return () => clearInterval(id);
-  }, []);
-
-  const scene = useMemo(() => {
-    switch (index) {
-      case 0: {
-        const [base, target] = pickTwoDistinct(EMOJIONADO_EMOJI_POOL);
-        return <EmojiGridScene baseEmoji={base} targetEmoji={target} scale={scale} />;
-      }
-      case 1:
-        return <EmojiClueScene emojis={pickRandom(EMOJIONADO_MOVIE_CLUES)} scale={scale} />;
-      case 2:
-        return (
-          <EmojiGridScene
-            baseEmoji={pickRandom(EMOJIONADO_EMOJI_POOL)}
-            targetEmoji={pickRandom(EMOJIONADO_FLAG_POOL)}
-            scale={scale}
-          />
-        );
-      default:
-        return <EmojiClueScene emojis={pickRandom(EMOJIONADO_WHATIS_CLUES)} scale={scale} />;
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [index, scale]);
-
-  return (
-    <Box
-      sx={{
-        width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center",
-        "& .fade-in": { animation: "emojionadoFadeIn 0.4s ease" },
-        "@keyframes emojionadoFadeIn": { "0%": { opacity: 0 }, "100%": { opacity: 1 } },
-      }}
-    >
-      <Box key={index} className="fade-in">
-        {scene}
-      </Box>
     </Box>
   );
 }
