@@ -314,9 +314,12 @@ export function ViborealoPreview({ scale = 1, lang = "es" }: ViborealoPreviewPro
           <Box
             key={`${r}-${c}`}
             sx={{
+              position: "relative",
               width: cellSize, height: cellSize, display: "flex", alignItems: "center", justifyContent: "center",
               fontFamily: "monospace", fontSize: 11 * scale, fontWeight: 800,
-              borderRadius: cell?.kind === "head" ? "30% 70% 70% 30%" : "4px",
+              // Más redondeado arriba que abajo: da la idea de un hocico
+              // apuntando hacia arriba (la víbora sube hasta acá).
+              borderRadius: cell?.kind === "head" ? "55% 55% 20% 20%" : "4px",
               border: cell?.kind === "divider" ? `1px solid ${ACCENT}55` : "none",
               backgroundColor:
                 !cell ? "transparent"
@@ -327,7 +330,14 @@ export function ViborealoPreview({ scale = 1, lang = "es" }: ViborealoPreviewPro
               color: cell?.kind === "tile" || cell?.kind === "divider" ? ACCENT : "#fff",
             }}
           >
-            {cell?.letter ?? ""}
+            {cell?.kind === "head" ? (
+              <>
+                <Box sx={{ position: "absolute", top: "24%", left: "22%", width: "18%", height: "18%", borderRadius: "50%", backgroundColor: "#fff" }} />
+                <Box sx={{ position: "absolute", top: "24%", left: "60%", width: "18%", height: "18%", borderRadius: "50%", backgroundColor: "#fff" }} />
+              </>
+            ) : (
+              cell?.letter ?? ""
+            )}
           </Box>
         )),
       )}
