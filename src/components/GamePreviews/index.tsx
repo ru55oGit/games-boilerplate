@@ -56,14 +56,22 @@ export function TuttifrutaloPreview({ scale = 1, lang = "es" }: TuttifrutaloPrev
       >
         V
       </Box>
-      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 0.3 * scale }}>
+      {/* display:grid sin columnas explícitas = una sola columna cuyo
+          ancho lo marca el ítem más ancho, y el resto estira para
+          igualarlo (justify-items:stretch, default de grid) — todos los
+          chips terminan con el ancho del más largo sin medir nada a mano. */}
+      <Box sx={{ display: "grid", gap: 0.3 * scale, justifyItems: "stretch" }}>
         {entries.map((e) => (
           <Box
             key={e.label}
-            sx={{ backgroundColor: "#fff", border: "1px solid #e5e7eb", borderRadius: "999px", px: 1 * scale, py: 0.1 * scale }}
+            sx={{
+              display: "flex", alignItems: "center", justifyContent: "space-between", gap: 1 * scale,
+              backgroundColor: "#fff", border: "1px solid #e5e7eb", borderRadius: "999px",
+              px: 1 * scale, py: 0.2 * scale, whiteSpace: "nowrap",
+            }}
           >
-            <Typography sx={{ fontSize: 7 * scale, color: "#999", fontWeight: 700, textTransform: "uppercase", lineHeight: 1.1 }}>
-              {e.label}
+            <Typography sx={{ fontSize: 8 * scale, color: "#999", fontWeight: 700, textTransform: "uppercase", lineHeight: 1.1 }}>
+              {e.label}:
             </Typography>
             <Typography sx={{ fontSize: 9 * scale, color: "#333", fontWeight: 700, lineHeight: 1.1 }}>
               {e.value}
