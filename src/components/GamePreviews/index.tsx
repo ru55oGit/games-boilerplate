@@ -44,8 +44,8 @@ export function TuttifrutaloPreview({ scale = 1, lang = "es" }: TuttifrutaloPrev
   return (
     <Box sx={{
       width: "100%", height: "100%",
-      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "flex-start",
-      gap: 0.4 * scale, pt: 0.5,
+      display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+      gap: 0.4 * scale,
     }}>
       <Box
         sx={{
