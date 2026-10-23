@@ -132,7 +132,7 @@ export default function ImaginaloCarousel({ lang = "es" }: ImaginaloCarouselProp
         </Typography>
 
         <Box sx={{
-          flex: 1, minHeight: 0, width: "62%",
+          width: "56%", aspectRatio: "1", flexShrink: 0,
           display: "flex", alignItems: "center", justifyContent: "center",
           border: "2px solid #000", borderRadius: 1, backgroundColor: "#fff",
           overflow: "hidden", p: 0.5,
