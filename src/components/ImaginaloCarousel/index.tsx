@@ -100,7 +100,12 @@ export default function ImaginaloCarousel({ lang = "es" }: ImaginaloCarouselProp
     const maxRowLetters = Math.max(
       ...rows.map((row) => row.replace(/ /g, "").length),
     );
-    return Math.max(8, Math.min(12, Math.floor(ASSUMED_WIDTH_PX / maxRowLetters)));
+    // Sin piso: "una aventura|extraordinaria" tiene un renglón de 14
+    // letras — si se fuerza un tamaño mínimo ahí, desborda el ancho de la
+    // card más angosta del grid (2 columnas, mobile). Esta única respuesta
+    // larga queda más chica; el resto (la mayoría, 5-9 letras) sí gana con
+    // el techo subido a 13.
+    return Math.max(5, Math.min(13, Math.floor(ASSUMED_WIDTH_PX / maxRowLetters)));
   }, [answer]);
 
   return (
@@ -122,19 +127,24 @@ export default function ImaginaloCarousel({ lang = "es" }: ImaginaloCarouselProp
     >
       <Box key={`${slide.category}-${lang}`} className="fade-in" sx={{
         width: "100%", height: "100%",
-        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 1.4,
+        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 0.6,
       }}>
         <Typography sx={{
-          color: ACCENT, fontWeight: 800, fontSize: 11, letterSpacing: "0.5px",
+          color: ACCENT, fontWeight: 800, fontSize: 13, letterSpacing: "0.5px",
           textAlign: "center", lineHeight: 1.1,
         }}>
           {label}
         </Typography>
 
+        {/* 58% y no más: con título y fichas ya agrandados, el contenido
+            total tiene que seguir entrando en el box cuadrado de la card
+            más angosta del grid (2 columnas, mobile) — ver aspectRatio:1 +
+            overflow:hidden en el padre (Home.tsx). Un % más alto desborda
+            ahí aunque en desktop no se note (card más ancha = box más alto). */}
         <Box sx={{
-          width: "68%", aspectRatio: "1", flexShrink: 0,
+          width: "58%", aspectRatio: "1", flexShrink: 0,
           display: "flex", alignItems: "center", justifyContent: "center",
-          border: "2px solid #000", borderRadius: 1, backgroundColor: "#fff",
+          border: "2px solid #ccc", borderRadius: 1, backgroundColor: "#fff",
           overflow: "hidden", p: 0.5,
         }}>
           <Suspense fallback={null}>
