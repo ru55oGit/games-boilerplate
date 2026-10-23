@@ -532,7 +532,7 @@ const EMOJIONADO_SCENES: EmojionadoScene[] = [
     targetIndex: 6,
   },
 ];
-const EMOJIONADO_ROTATE_MS = 2400;
+const EMOJIONADO_ROTATE_MS = 2500;
 
 interface EmojionadoPreviewProps extends ScaleProps {
   lang?: SupportedLanguage;

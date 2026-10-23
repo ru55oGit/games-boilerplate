@@ -16,7 +16,7 @@ Object.entries(MODULES).forEach(([path, loader]) => {
   MODULES_BY_NAME[name] = loader;
 });
 
-const ROTATE_MS = 2200;
+const ROTATE_MS = 2500;
 const ACCENT = "#e74c3c";
 const TILE_BORDER = "#1f254d";
 const TILE_TEXT = "#59607a";
