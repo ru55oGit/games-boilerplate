@@ -49,6 +49,21 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({
   useEffect(() => {
     if (hasInitialized) return;
 
+    // Un juego puede pasar de vuelta el idioma que el usuario eligió ahí
+    // (?lang=xx) al volver al hub — tiene prioridad sobre lo guardado
+    // localmente. Sin esto, el idioma solo viajaba hub→juego, nunca
+    // juego→hub (mismo patrón que ya usa cada juego al leer el lang que
+    // le pasa el hub).
+    const urlLang = new URLSearchParams(window.location.search).get(
+      "lang",
+    ) as SupportedLanguage | null;
+    if (urlLang && translations[urlLang]) {
+      setCurrentLanguage(urlLang);
+      localStorage.setItem(LANGUAGE_STORAGE_KEY, urlLang);
+      setHasInitialized(true);
+      return;
+    }
+
     // Check if user has previously selected a language
     const savedLanguage = localStorage.getItem(
       LANGUAGE_STORAGE_KEY,
