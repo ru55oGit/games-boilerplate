@@ -53,7 +53,7 @@ function buildGames(scale: number, lang: SupportedLanguage): GameEntry[] {
         "Adivinhe o que uma imagem representa entre bandeiras, funkos, escudos, sombras, logos e muitas outras categorias.",
       ),
       url: "https://imaginaloapp.com?from=boludeando",
-      preview: <ImaginaloCarousel />,
+      preview: <ImaginaloCarousel lang={lang} />,
     },
     {
       name: "Ensopalo",
