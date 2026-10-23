@@ -122,7 +122,7 @@ export default function ImaginaloCarousel({ lang = "es" }: ImaginaloCarouselProp
     >
       <Box key={`${slide.category}-${lang}`} className="fade-in" sx={{
         width: "100%", height: "100%",
-        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 0.5,
+        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 1.4,
       }}>
         <Typography sx={{
           color: ACCENT, fontWeight: 800, fontSize: 11, letterSpacing: "0.5px",
@@ -132,7 +132,7 @@ export default function ImaginaloCarousel({ lang = "es" }: ImaginaloCarouselProp
         </Typography>
 
         <Box sx={{
-          width: "56%", aspectRatio: "1", flexShrink: 0,
+          width: "68%", aspectRatio: "1", flexShrink: 0,
           display: "flex", alignItems: "center", justifyContent: "center",
           border: "2px solid #000", borderRadius: 1, backgroundColor: "#fff",
           overflow: "hidden", p: 0.5,
