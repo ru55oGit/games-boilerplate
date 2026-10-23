@@ -177,23 +177,16 @@ export default function Home() {
 
         <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1.25 }}>
           {games.map((game, position) => {
-            // Imaginalo no tiene contenido armado en portugués todavía (ver
-            // memoria del proyecto) — en vez de mandar a un jugador PT a un
-            // juego que se le va a mostrar en otro idioma, se deshabilita la
-            // card entera mientras currentLanguage sea "pt" (2026-10-10).
-            const isUnavailable = currentLanguage === "pt" && game.name === "Imaginalo";
             const gameSlug = game.name.toLowerCase();
             // UTMs para distinguir en GA4 de cada juego cuánto tráfico viene
             // específicamente del grid del hub (vs. directo, redes, etc.).
-            const href = isUnavailable
-              ? undefined
-              : `${game.url}&lang=${currentLanguage}&utm_source=boludeando&utm_medium=portal&utm_campaign=grid&utm_content=${gameSlug}`;
+            const href = `${game.url}&lang=${currentLanguage}&utm_source=boludeando&utm_medium=portal&utm_campaign=grid&utm_content=${gameSlug}`;
             return (
             <Box
               key={game.name}
-              component={isUnavailable ? "div" : "a"}
+              component="a"
               href={href}
-              onClick={isUnavailable ? undefined : () => track("select_game", { game_name: gameSlug, position })}
+              onClick={() => track("select_game", { game_name: gameSlug, position })}
               sx={{
                 // minWidth:0 es necesario porque este Box es un ítem de
                 // grid (1fr 1fr): sin esto, el default de CSS Grid es que
@@ -214,9 +207,8 @@ export default function Home() {
                 p: 1.25,
                 boxShadow: "0 6px 16px rgba(0,0,0,0.14)",
                 transition: "transform 0.15s ease",
-                opacity: isUnavailable ? 0.5 : 1,
-                cursor: isUnavailable ? "not-allowed" : "pointer",
-                "&:active": { transform: isUnavailable ? "none" : "scale(0.98)" },
+                cursor: "pointer",
+                "&:active": { transform: "scale(0.98)" },
               }}
             >
               <Typography
@@ -255,7 +247,7 @@ export default function Home() {
                 sx={{
                   alignSelf: "center",
                   borderRadius: 999,
-                  backgroundColor: isUnavailable ? "#aaa" : "#e74c3c",
+                  backgroundColor: "#e74c3c",
                   color: "#fff",
                   fontWeight: 700,
                   fontSize: 12,
@@ -264,7 +256,7 @@ export default function Home() {
                   mt: 0.25,
                 }}
               >
-                {isUnavailable ? "Não disponível em PT" : t.playButton}
+                {t.playButton}
               </Box>
             </Box>
             );
