@@ -186,7 +186,7 @@ export default function Home() {
               key={game.name}
               component="a"
               href={href}
-              onClick={() => track("select_game", { game_name: gameSlug, position })}
+              onClick={() => track("select_game", { clicked_game: gameSlug, position })}
               sx={{
                 // minWidth:0 es necesario porque este Box es un ítem de
                 // grid (1fr 1fr): sin esto, el default de CSS Grid es que
