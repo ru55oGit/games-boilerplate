@@ -67,7 +67,7 @@ function formatUsdEquivalent(priceArs: number): string {
   return `≈US$${usd.toFixed(2)}`;
 }
 
-// Dominios reales de los 8 juegos (mismo listado que GAMES en
+// Dominios reales de los 9 juegos (mismo listado que GAMES en
 // boludeando-ads/src/pages/CampaignDetail.tsx — emojinalo es el único caso
 // donde el slug interno difiere del dominio en vivo, emojionado.com).
 const GAME_URLS = [
@@ -79,6 +79,7 @@ const GAME_URLS = [
   "tuttifrutalo.com",
   "imaginaloapp.com",
   "emojionado.com",
+  "encastralo.com",
 ];
 
 // Misma paleta de 5 colores del logo BOLUDEANDO (og-image.jpg), ciclando

@@ -18,6 +18,7 @@ import {
   LetrisPreview,
   EmojionadoPreview,
   ViborealoPreview,
+  EncastraloPreview,
 } from "../components/GamePreviews";
 
 // es/en/pt — mismo alcance que el resto del hub (adFallbackCopy.ts,
@@ -124,6 +125,16 @@ function buildGames(scale: number, lang: SupportedLanguage): GameEntry[] {
       ),
       url: "https://tuttifrutalo.com?from=boludeando",
       preview: <TuttifrutaloPreview scale={scale} lang={lang} />,
+    },
+    {
+      name: "Encastralo",
+      description: d(
+        "Arrastrá piezas a una grilla y recorré casillas contiguas para borrarlas: sumá 10, formá palabras, o juntá 3 frutas iguales — vos elegís cómo jugar.",
+        "Drag pieces onto a grid and trace connected cells to clear them: add up to 10, spell words, or match 3 of the same fruit — you choose how to play.",
+        "Arraste peças para uma grade e percorra casas conectadas para apagá-las: some até 10, forme palavras, ou junte 3 frutas iguais — você escolhe como jogar.",
+      ),
+      url: "https://encastralo.com?from=boludeando",
+      preview: <EncastraloPreview scale={scale} lang={lang} />,
     },
   ];
 }

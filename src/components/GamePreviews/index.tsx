@@ -581,3 +581,94 @@ export function EmojionadoPreview({ scale = 1, lang = "es" }: EmojionadoPreviewP
     </Box>
   );
 }
+
+// "Sumá 10 · formá palabras · juntá frutas" — Encastralo tiene 3 variantes,
+// pero el preview se centra en "palabras" (la variante principal del
+// juego, ver tagline en su propio translations.ts) para que se entienda
+// de un vistazo, igual que el resto de los previews de acá se centran en
+// una sola idea. Misma paleta real que usa el juego: piezas de colores
+// (ver PIECE_COLORS en game/constants.ts de encastraloReact), celdas ya
+// encastradas en blanco con texto oscuro, camino borrado en verde.
+const ENCASTRALO_WORDS: Record<SupportedLanguage, string> = {
+  es: "SOL",
+  en: "SUN",
+  pt: "SOL",
+  fr: "SOL",
+};
+const ENCASTRALO_PIECE_COLOR = "#7b6cf6";
+const ENCASTRALO_GRID_COLS = 6;
+
+type EncastraloCell = { letter: string; kind: "empty" | "piece" | "cleared" | "locked" };
+
+function encastraloEmptyRow(): EncastraloCell[] {
+  return Array.from({ length: ENCASTRALO_GRID_COLS }, () => ({ letter: "", kind: "empty" }));
+}
+
+const ENCASTRALO_FILLER_POOL = ["R", "T", "N", "M", "Q", "K"];
+function randomEncastraloFiller(): string {
+  return ENCASTRALO_FILLER_POOL[Math.floor(Math.random() * ENCASTRALO_FILLER_POOL.length)];
+}
+
+function encastraloWordRow(word: string): EncastraloCell[] {
+  const start = Math.max(0, Math.floor((ENCASTRALO_GRID_COLS - word.length) / 2));
+  return Array.from({ length: ENCASTRALO_GRID_COLS }, (_, c) => {
+    const i = c - start;
+    if (i >= 0 && i < word.length) return { letter: word[i], kind: "cleared" as const };
+    if (Math.random() < 0.4) return { letter: randomEncastraloFiller(), kind: "locked" as const };
+    return { letter: "", kind: "empty" as const };
+  });
+}
+
+interface EncastraloPreviewProps extends ScaleProps {
+  lang?: SupportedLanguage;
+}
+
+export function EncastraloPreview({ scale = 1, lang = "es" }: EncastraloPreviewProps) {
+  const word = ENCASTRALO_WORDS[lang] ?? ENCASTRALO_WORDS.es;
+
+  const grid = useMemo(() => {
+    const rows: EncastraloCell[][] = [];
+    rows.push(encastraloEmptyRow());
+
+    // Pieza de 2 celdas (vertical) entrando por arriba, como si se acabara
+    // de arrastrar a la grilla.
+    const pieceCol = Math.floor(ENCASTRALO_GRID_COLS / 2);
+    const pieceRowTop = encastraloEmptyRow();
+    pieceRowTop[pieceCol] = { letter: randomEncastraloFiller(), kind: "piece" };
+    rows.push(pieceRowTop);
+    const pieceRowBottom = encastraloEmptyRow();
+    pieceRowBottom[pieceCol] = { letter: randomEncastraloFiller(), kind: "piece" };
+    rows.push(pieceRowBottom);
+
+    rows.push(encastraloWordRow(word));
+    rows.push(encastraloEmptyRow());
+
+    return rows;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [word]);
+
+  return (
+    <Box sx={{ display: "grid", gridTemplateColumns: `repeat(${ENCASTRALO_GRID_COLS}, 1fr)`, gap: `${2 * scale}px`, width: "100%" }}>
+      {grid.map((row, r) =>
+        row.map((cell, c) => (
+          <Box
+            key={`${r}-${c}`}
+            sx={{
+              aspectRatio: "1", display: "flex", alignItems: "center", justifyContent: "center",
+              fontFamily: "monospace", fontSize: 10 * scale, fontWeight: 800, borderRadius: "3px",
+              backgroundColor:
+                cell.kind === "empty" ? "#f1f1f1"
+                : cell.kind === "piece" ? ENCASTRALO_PIECE_COLOR
+                : cell.kind === "cleared" ? "#22c55e"
+                : "#fff",
+              color: cell.kind === "empty" ? "transparent" : cell.kind === "locked" ? "#333" : "#fff",
+              boxShadow: cell.kind === "locked" ? "inset 0 0 0 1px #e0e0e0" : "none",
+            }}
+          >
+            {cell.letter}
+          </Box>
+        )),
+      )}
+    </Box>
+  );
+}
