@@ -609,14 +609,23 @@ function randomEncastraloFiller(): string {
   return ENCASTRALO_FILLER_POOL[Math.floor(Math.random() * ENCASTRALO_FILLER_POOL.length)];
 }
 
+// Una palabra centrada y resaltada en verde (seleccionada); el resto de la
+// fila queda con alguna letra suelta.
 function encastraloWordRow(word: string): EncastraloCell[] {
   const start = Math.max(0, Math.floor((ENCASTRALO_GRID_COLS - word.length) / 2));
   return Array.from({ length: ENCASTRALO_GRID_COLS }, (_, c) => {
     const i = c - start;
     if (i >= 0 && i < word.length) return { letter: word[i], kind: "cleared" as const };
-    if (Math.random() < 0.4) return { letter: randomEncastraloFiller(), kind: "locked" as const };
+    if (Math.random() < 0.2) return { letter: randomEncastraloFiller(), kind: "locked" as const };
     return { letter: "", kind: "empty" as const };
   });
+}
+
+// Una línea con letras sueltas dispersas (las fichas ya asentadas en blanco).
+function encastraloLooseRow(): EncastraloCell[] {
+  return Array.from({ length: ENCASTRALO_GRID_COLS }, () =>
+    Math.random() < 0.5 ? { letter: randomEncastraloFiller(), kind: "locked" as const } : { letter: "", kind: "empty" as const },
+  );
 }
 
 interface EncastraloPreviewProps extends ScaleProps {
@@ -628,20 +637,27 @@ export function EncastraloPreview({ scale = 1, lang = "es" }: EncastraloPreviewP
 
   const grid = useMemo(() => {
     const rows: EncastraloCell[][] = [];
-    rows.push(encastraloEmptyRow());
 
-    // Pieza de 2 celdas (vertical) entrando por arriba, como si se acabara
-    // de arrastrar a la grilla.
-    const pieceCol = Math.floor(ENCASTRALO_GRID_COLS / 2);
-    const pieceRowTop = encastraloEmptyRow();
-    pieceRowTop[pieceCol] = { letter: randomEncastraloFiller(), kind: "piece" };
-    rows.push(pieceRowTop);
-    const pieceRowBottom = encastraloEmptyRow();
-    pieceRowBottom[pieceCol] = { letter: randomEncastraloFiller(), kind: "piece" };
-    rows.push(pieceRowBottom);
+    // Arriba, centrada: la pieza en "U" violeta rodeando una letra en blanco.
+    // Cada celda de la pieza lleva su letra (como las piezas reales del juego).
+    //   V  W  V      (V = celda violeta con letra; W = la letra blanca rodeada)
+    //   V  V  V
+    const col = Math.floor(ENCASTRALO_GRID_COLS / 2) - 1; // deja la U centrada (3 de ancho): cols 2-3-4
+    const uTop = encastraloEmptyRow();
+    uTop[col] = { letter: randomEncastraloFiller(), kind: "piece" };
+    uTop[col + 1] = { letter: randomEncastraloFiller(), kind: "locked" }; // letra en blanco rodeada
+    uTop[col + 2] = { letter: randomEncastraloFiller(), kind: "piece" };
+    const uBottom = encastraloEmptyRow();
+    uBottom[col] = { letter: randomEncastraloFiller(), kind: "piece" };
+    uBottom[col + 1] = { letter: randomEncastraloFiller(), kind: "piece" };
+    uBottom[col + 2] = { letter: randomEncastraloFiller(), kind: "piece" };
+    rows.push(uTop, uBottom);
+    rows.push(encastraloEmptyRow()); // aire entre la pieza de arriba y las líneas de abajo
 
+    // Abajo de todo: dos líneas de letras con una palabra en verde en el medio.
+    rows.push(encastraloLooseRow());
     rows.push(encastraloWordRow(word));
-    rows.push(encastraloEmptyRow());
+    rows.push(encastraloLooseRow());
 
     return rows;
     // eslint-disable-next-line react-hooks/exhaustive-deps

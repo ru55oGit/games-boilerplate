@@ -41,6 +41,42 @@ function d(es: string, en: string, pt: string): LocalizedDescription {
   return { es, en, pt };
 }
 
+// Cartel del destacado (los nombres de juego no se traducen, pero esto sí).
+const FEATURED_LABEL: Record<SupportedLanguage, string> = {
+  es: "⭐ Juego de la semana",
+  en: "⭐ Game of the week",
+  pt: "⭐ Jogo da semana",
+  fr: "⭐ Jeu de la semaine",
+};
+
+// Orden de prioridad del destacado: la rotación semanal recorre esta lista en
+// este orden (no el orden de la grilla). Los primeros salen antes/más seguido
+// en el arranque del ciclo.
+const FEATURED_PRIORITY = [
+  "Enroscado",
+  "Encastralo",
+  "Letris",
+  "Imaginalo",
+  "Viborealo",
+  "Ensopalo",
+  "Enganchalo",
+  "Emojionado",
+  "Tuttifrutalo",
+];
+
+// Índice del juego destacado, rotando una vez por semana. Es determinístico
+// por fecha (mismo para todos los visitantes, sin backend): se calcula el
+// número de semana desde un lunes ancla y se cicla por la cantidad de juegos.
+function featuredWeeklyIndex(count: number, now: number = Date.now()): number {
+  if (count <= 0) return 0;
+  const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+  // Ancla en el lunes 2026-11-09: así el ciclo arranca en el primero de la
+  // lista de prioridad (Enroscado) esa semana y rota de a uno cada lunes.
+  const anchor = Date.UTC(2026, 10, 9);
+  const week = Math.floor((now - anchor) / WEEK_MS);
+  return ((week % count) + count) % count;
+}
+
 // Los nombres (Imaginalo, Ensopalo, etc.) son marca propia, no se traducen.
 // `scale` agranda el contenido interno de los previews con tamaño fijo en
 // desktop (Ensopalo e Imaginalo ya escalan solos, por eso no lo reciben).
@@ -146,6 +182,15 @@ export default function Home() {
   // creando el theme por default rompía el bundle de Vite.
   const isDesktop = useMediaQuery("(min-width:900px)");
   const games = buildGames(isDesktop ? 1.6 : 1, currentLanguage);
+  const featuredName = FEATURED_PRIORITY[featuredWeeklyIndex(FEATURED_PRIORITY.length)];
+  const foundIdx = games.findIndex((g) => g.name === featuredName);
+  const featuredIdx = foundIdx >= 0 ? foundIdx : 0;
+  const featured = games[featuredIdx];
+
+  const cardHref = (game: GameEntry, campaign: string) =>
+    `${game.url}&lang=${currentLanguage}&utm_source=boludeando&utm_medium=portal&utm_campaign=${campaign}&utm_content=${game.name.toLowerCase()}`;
+  const description = (game: GameEntry) =>
+    game.description[currentLanguage as keyof LocalizedDescription] ?? game.description.es;
 
   return (
     <Layout showFooter>
@@ -186,8 +231,76 @@ export default function Home() {
           {t.subtitle}
         </Typography>
 
+        {/* Destacado de la semana: a todo el ancho arriba. En mobile el
+            preview va cuadrado full-width; en desktop va al costado (cuadrado
+            de alto limitado) para que el hero no quede enorme. Rota solo cada
+            semana (ver featuredWeeklyIndex). */}
+        <Box
+          component="a"
+          href={cardHref(featured, "featured")}
+          onClick={() => track("select_game", { clicked_game: featured.name.toLowerCase(), position: 0 })}
+          sx={{
+            textDecoration: "none",
+            borderRadius: 4,
+            backgroundColor: "#fff",
+            boxShadow: "0 8px 22px rgba(0,0,0,0.18)",
+            p: { xs: 1.5, md: 2 },
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            gap: { xs: 1, md: 2.5 },
+            alignItems: { md: "center" },
+            transition: "transform 0.15s ease",
+            cursor: "pointer",
+            "&:active": { transform: "scale(0.99)" },
+          }}
+        >
+          <Box
+            sx={{
+              flexShrink: 0,
+              width: { xs: "100%", md: 300 },
+              borderRadius: 3,
+              backgroundColor: "#f7f7f7",
+              border: "1px solid #eee",
+              aspectRatio: "1",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              p: 1.5,
+              overflow: "hidden",
+            }}
+          >
+            {featured.preview}
+          </Box>
+
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 0.85,
+              flex: 1,
+              minWidth: 0,
+              textAlign: { xs: "center", md: "left" },
+              alignItems: { xs: "center", md: "flex-start" },
+            }}
+          >
+            <Box sx={{ backgroundColor: "#fff3cd", color: "#8a6d00", fontWeight: 800, fontSize: 12, px: 1.25, py: 0.4, borderRadius: 999 }}>
+              {FEATURED_LABEL[currentLanguage] ?? FEATURED_LABEL.es}
+            </Box>
+            <Typography sx={{ fontFamily: "Lobster, cursive", color: "#e74c3c", fontSize: { xs: 30, md: 36 }, lineHeight: 1.05 }}>
+              {featured.name}
+            </Typography>
+            <Typography sx={{ color: "#777", fontSize: { xs: 13, md: 14.5 }, lineHeight: 1.45 }}>
+              {description(featured)}
+            </Typography>
+            <Box sx={{ borderRadius: 999, backgroundColor: "#e74c3c", color: "#fff", fontWeight: 700, fontSize: 14, px: 3, py: 0.9, mt: 0.5 }}>
+              {t.playButton}
+            </Box>
+          </Box>
+        </Box>
+
         <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1.25 }}>
           {games.map((game, position) => {
+            if (position === featuredIdx) return null; // ya va arriba como destacado
             const gameSlug = game.name.toLowerCase();
             // UTMs para distinguir en GA4 de cada juego cuánto tráfico viene
             // específicamente del grid del hub (vs. directo, redes, etc.).
